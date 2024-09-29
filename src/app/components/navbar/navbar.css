@@ -1,0 +1,34 @@
+ *{
+    margin:8px;
+ }
+ nav{
+  
+   font-size: medium;
+   font-style: normal;
+   height:80px;
+   justify-content: center;
+  background-color: #FFFFFF;
+  position:sticky;
+  top:0;
+ }
+ nav div{ 
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    
+ } 
+ .links{
+    display: flex;
+    gap:20px;
+   
+ }
+ button{
+   
+    border-radius: 8px;
+    background-color:#013792;
+    color:#FFFFFF;
+    width:131px;
+    height:48px;
+ }
+

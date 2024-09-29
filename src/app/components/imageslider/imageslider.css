@@ -1,0 +1,44 @@
+
+.background-slider {
+   position: relative;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 600px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center; /* Center the image */
+    transition: background-image 6s ease-out; /* Smooth transition */
+    animation: changeImage 15s linear infinite;
+    opacity: 0; 
+    z-index: -1; 
+  }
+  @keyframes changeImage {
+    
+        0% {
+            transition: scale(1);
+            opacity: 1;  
+        }
+        50% {
+            transition: scale(1.05);
+            opacity: 1.5;  
+        }
+        100% {
+            transition: scale(1);
+            opacity: 1;  
+        }
+    }
+    
+  
+  .content {
+    position: relative; /* Position relative for content layering */
+    z-index: 1; /* Ensure content is above background */
+    color: white;
+    padding: 20px;
+    
+
+  }
+  .content h1{
+    text-indent: 2px;
+  }
+  
