@@ -1,0 +1,109 @@
+.dashboard-container {
+    padding: 20px;
+    display:flex;
+    flex-direction: rows;
+    align-items: center;
+    justify-content: space-between;
+    
+  }
+  
+  h2, h3 {
+    color: #FF9874;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 48px;
+    font-family: 'Plus Jakarta Sans';
+  }
+  
+  /* Card for today's vaccination */
+  .today-card {
+    display: flex;
+    flex-direction: row;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  
+  .today-date {
+    text-align: center;
+    margin-right: 15px;
+    color: #013792;
+  }
+  
+  .today-day {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .today-month {
+    font-size: 14px;
+  }
+  
+  .today-details h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .today-details p {
+    margin: 5px 0;
+    color: #666;
+  }
+  
+  .upcoming-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+    gap: 15px;
+    content: normal;
+    
+  }
+  
+  .vaccine-card {
+    display: flex;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    align-items: center;
+   
+  }
+  
+  .vaccine-date {
+    text-align: center;
+    margin-right: 15px;
+    color: #013792;
+  }
+  
+  .vaccine-day {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .vaccine-month {
+    font-size: 14px;
+  }
+  
+  .vaccine-details h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .vaccine-details p {
+    margin: 5px 0;
+    color: #666;
+  }
+  section {
+    display: flex;
+    flex: 1 1 30%;
+    flex-direction: column;
+    justify-content: space-between; 
+    background: #f9f9f9;
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px; 
+    overflow-y: scroll;
+    height: 400px;
+  }

@@ -1,10 +1,10 @@
 "use client";
 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc} from 'firebase/firestore';
-import React, { useState } from "react";
-import { auth, db} from "../firebaseConfig";
+import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { auth, db } from "../firebaseConfig";
 import "./register.css";
 
 const Register: React.FC = () => {
@@ -12,23 +12,22 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState(""); // State for email
   const [password, setPassword] = useState(""); // State for password
   const [name, setName] = useState("");
-  const [dob, setDo] = useState(''); // State for name
   const router = useRouter();
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!isChecked) {
       alert("You must agree to the terms and conditions to proceed.");
-      return; // Exit the function if not checked
+      return; 
     }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
-      // Create a new document in Firestore
-      const response = await setDoc(doc(db,'Users',user.uid), {
-        Name: '',
+   
+      const response = setDoc(doc(db, 'Users', user.uid), {
+        FirstName: '',
         lastName: '',
         email: email,
         isAdmin: false,
@@ -43,23 +42,7 @@ const Register: React.FC = () => {
     }
   }
 
- /* const signUp = async () => {
-    try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      setEmail("");
-      setPassword("");
-      setName("");
-      console.log("User Email:", response.user.email);
-      console.log("User ID:", response.user.uid);
-    } catch (error: any) {
-      alert("Error creating user: " + error.message);
-      throw new Error(error.message);
-    }
-  }*/
+ 
 
   return (
     <div className="registration-container">
@@ -126,4 +109,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+export default Register; 

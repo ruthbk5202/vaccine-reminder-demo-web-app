@@ -1,0 +1,20 @@
+ 
+.event-button{
+    display:flex;
+    justify-content: end;
+    align-items:end;
+}
+ .event-button  .btn{
+    display: flex;
+   width:60px;
+   height:60px;
+   border-radius: 50%;
+    border: none;
+    justify-content:center;
+    align-items: center;
+    background-color: gray;
+    position: fixed;
+}
+.btn:hover{
+    background-color: rgb(71, 59, 59);
+}
