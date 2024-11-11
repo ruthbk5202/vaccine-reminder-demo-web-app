@@ -1,4 +1,4 @@
-import { firestore } from 'firebase-functions/v2';
+/*import { firestore } from 'firebase-functions/v2';
 import * as admin from 'firebase-admin'; // Import firebase-admin to access Firestore types
 import axios from 'axios';
 
@@ -9,7 +9,7 @@ admin.initializeApp();
 const ONE_SIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID';
 const ONE_SIGNAL_API_KEY = 'YOUR_ONESIGNAL_API_KEY';
 
-export const sendEmailNotification = firestore.document('vaccineReminders/{reminderId}')
+export const sendEmailNotification = firestore.document('vaccineReminders/{userId}')
   .onCreate(async (snap: admin.firestore.DocumentSnapshot, context) => {
     // Type the snap parameter explicitly as a Firestore document snapshot
     const reminderData = snap.data() as {
@@ -40,4 +40,4 @@ export const sendEmailNotification = firestore.document('vaccineReminders/{remin
     } catch (error: any) {
       console.error('Error sending email notification:', error.response?.data || error.message);
     }
-  });
+  });*/
