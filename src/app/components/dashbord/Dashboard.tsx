@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import "./dashboard.css";
 
-interface VaccineReminders {
+interface vaccineReminders {
   vaccineName: string;
   vaccineType: string;
   fullName: string;
@@ -17,49 +17,29 @@ interface VaccineReminders {
 }
 
 interface VaccineDashboardProps {
-  events: VaccineReminders[];
+  events: vaccineReminders[];
 }
 
 const VaccineDashboard: React.FC<VaccineDashboardProps> = ({ events }) => {
   const [today, setToday] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
-  const [loading, setLoading] = useState(true);
 
   const normalizeDate = (date: string) => date.split("T")[0];
 
-  const [todaysReminders, setTodaysReminders] = useState<VaccineReminders[]>(
-    []
+  const todaysReminders = events.filter(
+    (reminder) => normalizeDate(reminder.preferredDate) === today
   );
-  const [upcomingReminders, setUpcomingReminders] = useState<
-    VaccineReminders[]
-  >([]);
-  const [pastReminders, setPastReminders] = useState<VaccineReminders[]>([]);
+  const upcomingReminders = events.filter(
+    (reminder) => normalizeDate(reminder.preferredDate) > today
+  );
+  const pastReminders = events.filter(
+    (reminder) => normalizeDate(reminder.preferredDate) < today
+  );
 
   useEffect(() => {
-    if (events) {
-      setTodaysReminders(
-        events.filter(
-          (reminder) => normalizeDate(reminder.preferredDate) === today
-        )
-      );
-      setUpcomingReminders(
-        events.filter(
-          (reminder) => normalizeDate(reminder.preferredDate) > today
-        )
-      );
-      setPastReminders(
-        events.filter(
-          (reminder) => normalizeDate(reminder.preferredDate) < today
-        )
-      );
-      setLoading(false);
-    }
-  }, [events, today]);
-
-  if (loading) {
-    return <div className="loading-placeholder">Loading...</div>;
-  }
+    setToday(new Date().toISOString().split("T")[0]);
+  }, []);
 
   return (
     <div className="dashboard-container">
@@ -90,9 +70,9 @@ const VaccineDashboard: React.FC<VaccineDashboardProps> = ({ events }) => {
 
       <section>
         <h3>Upcoming Vaccines</h3>
-        <div className="upcoming-cards-container">
-          {upcomingReminders.length > 0 ? (
-            upcomingReminders.map((reminder, index) => (
+        {upcomingReminders.length > 0 ? (
+          <div className="upcoming-cards-container">
+            {upcomingReminders.map((reminder, index) => (
               <div key={index} className="vaccine-card">
                 <div className="vaccine-date">
                   <span className="vaccine-day">
@@ -110,18 +90,18 @@ const VaccineDashboard: React.FC<VaccineDashboardProps> = ({ events }) => {
                   <p>{reminder.vaccineType}</p>
                 </div>
               </div>
-            ))
-          ) : (
-            <p>No upcoming vaccines.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p>No upcoming vaccines.</p>
+        )}
       </section>
 
       <section>
         <h3>Vaccine History</h3>
-        <div className="history-cards-container">
-          {pastReminders.length > 0 ? (
-            pastReminders.map((reminder, index) => (
+        {pastReminders.length > 0 ? (
+          <div className="history-cards-container">
+            {pastReminders.map((reminder, index) => (
               <div key={index} className="vaccine-card">
                 <div className="vaccine-date">
                   <span className="vaccine-day">
@@ -145,11 +125,11 @@ const VaccineDashboard: React.FC<VaccineDashboardProps> = ({ events }) => {
                   </p>
                 </div>
               </div>
-            ))
-          ) : (
-            <p>No vaccine history.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p>No vaccine history.</p>
+        )}
       </section>
     </div>
   );

@@ -22,13 +22,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px; /* Add padding to prevent content from sticking to the edges */
+  padding: 20px;
 }
 
 .image-section img {
-  max-width: 100%; /* Ensures the image fits within the container */
-  height: auto; /* Maintains aspect ratio */
-  object-fit: cover; /* Ensures the image covers the area if needed */
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 
 .form-section {

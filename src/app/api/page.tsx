@@ -26,7 +26,6 @@ const UpdateProfile: React.FC = () => {
     try {
       let profilePictureURL = "";
 
-      // Upload profile picture if a file is selected
       if (profilePicture) {
         const storageRef = ref(
           storage,
@@ -36,14 +35,13 @@ const UpdateProfile: React.FC = () => {
         profilePictureURL = await getDownloadURL(storageRef);
       }
 
-      // Update Firestore document
       const userDocRef = doc(db, "Users", user.uid);
 
       await updateDoc(userDocRef, {
         FirstName: firstName,
         LastName: lastName,
         dob: dob,
-        profilePicture: profilePictureURL, // Save the uploaded URL
+        profilePicture: profilePictureURL,
       });
 
       alert("Profile updated successfully!");

@@ -141,24 +141,22 @@ const VaccineForm: React.FC = () => {
     }
 
     try {
-      const auth = getAuth(); // Initialize Firebase Auth
-      const user = auth.currentUser; // Get the current user
+      const auth = getAuth();
+      const user = auth.currentUser;
 
       if (!user) {
         alert("User is not logged in.");
         return;
       }
 
-      // Submit the form data along with userId
       await addDoc(collection(db, "vaccineReminders"), {
         ...formData,
-        vaccineName: formData.vaccineName?.value, // Only submit the vaccine name, but you can add more if needed
-        userId: user.uid, // Add userId to associate event with logged-in user
+        vaccineName: formData.vaccineName?.value,
+        userId: user.uid,
       });
 
       alert("Vaccine details submitted successfully!");
 
-      // Reset form after submission
       setFormData({
         vaccineName: null,
         vaccineType: "",

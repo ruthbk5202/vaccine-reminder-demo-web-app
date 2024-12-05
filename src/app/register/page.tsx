@@ -9,8 +9,8 @@ import "./register.css";
 
 const Register: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
-  const [email, setEmail] = useState(""); // State for email
-  const [password, setPassword] = useState(""); // State for password
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const router = useRouter();
 
@@ -84,7 +84,7 @@ const Register: React.FC = () => {
                 name="password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} // Update password state
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <label>

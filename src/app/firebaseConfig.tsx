@@ -5,7 +5,7 @@ import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBe_vVrogN04TSG6Lm25OiGVWpO_eqv2jU",
-  authDomain: "vaccine-app-3bad4.firebaseapp.com",
+  authDomain: "vaccine-app-3bad4.firebase.com",
   projectId: "vaccine-app-3bad4",
   storageBucket: "vaccine-app-3bad4.appspot.com",
   messagingSenderId: "127341967057",

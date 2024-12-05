@@ -7,22 +7,21 @@
 
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two equal-width columns */
-  gap: 20px; /* Space between columns */
-  align-items: center; /* Vertically center the content */
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: center;
 }
 
 .image-svg img {
-  width: 100%; /* Make image responsive */
-  height: auto; /* Maintain the image's aspect ratio */
+  width: 100%;
+  height: auto;
 }
 
 .content {
   display: flex;
   flex-direction: row;
-  justify-content: center; /* Vertically align the content */
+  justify-content: center;
 }
-
 .content p {
   font-size: 1.2rem;
   line-height: 1.5;
