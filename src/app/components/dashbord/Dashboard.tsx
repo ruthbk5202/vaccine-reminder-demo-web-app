@@ -1,8 +1,6 @@
 "use client";
-import { collection, onSnapshot } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { db } from '../../firebaseConfig';
-import './dashboard.css'; 
+import React, { useEffect, useState } from "react";
+import "./dashboard.css";
 
 interface VaccineReminders {
   vaccineName: string;
@@ -15,49 +13,64 @@ interface VaccineReminders {
   reminderDate: string;
   healthConditions?: string;
   notes?: string;
+  userId: string;
 }
 
-const VaccineDashboard: React.FC = () => {
-  const [reminders, setReminders] = useState<VaccineReminders[]>([]);
+interface VaccineDashboardProps {
+  events: VaccineReminders[];
+}
 
-  const fetchReminders = () => {
-    const unsubscribe = onSnapshot(
-      collection(db, 'vaccineReminders'), 
-      (snapshot) => {
-        const data = snapshot.docs.map(doc => doc.data() as VaccineReminders);
-        setReminders(data);
-      }, 
-      (error) => {
-        console.error('Error fetching reminders: ', error);
-      }
-    );
-    
-    return unsubscribe; 
-  };
+const VaccineDashboard: React.FC<VaccineDashboardProps> = ({ events }) => {
+  const [today, setToday] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
+  const [loading, setLoading] = useState(true);
+
+  const normalizeDate = (date: string) => date.split("T")[0];
+
+  const [todaysReminders, setTodaysReminders] = useState<VaccineReminders[]>(
+    []
+  );
+  const [upcomingReminders, setUpcomingReminders] = useState<
+    VaccineReminders[]
+  >([]);
+  const [pastReminders, setPastReminders] = useState<VaccineReminders[]>([]);
 
   useEffect(() => {
-    const unsubscribe = fetchReminders();
-    
-    
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+    if (events) {
+      setTodaysReminders(
+        events.filter(
+          (reminder) => normalizeDate(reminder.preferredDate) === today
+        )
+      );
+      setUpcomingReminders(
+        events.filter(
+          (reminder) => normalizeDate(reminder.preferredDate) > today
+        )
+      );
+      setPastReminders(
+        events.filter(
+          (reminder) => normalizeDate(reminder.preferredDate) < today
+        )
+      );
+      setLoading(false);
+    }
+  }, [events, today]);
 
-  const today = new Date().toISOString().split('T')[0];
-
-  const todaysReminders = reminders.filter(reminder => reminder.preferredDate === today);
-  const upcomingReminders = reminders.filter(reminder => reminder.preferredDate > today);
-  const pastReminders = reminders.filter(reminder => reminder.preferredDate < today);
+  if (loading) {
+    return <div className="loading-placeholder">Loading...</div>;
+  }
 
   return (
     <div className="dashboard-container">
       <section>
-        <h3>Today's Vaccination</h3>
+        <h3>Today&apos;s Vaccination</h3>
         <div className="today-card">
           <div className="today-date">
             <span className="today-day">{new Date().getDate()}</span>
-            <span className="today-month">{new Date().toLocaleString('default', { month: 'short' })}</span>
+            <span className="today-month">
+              {new Date().toLocaleString("default", { month: "short" })}
+            </span>
           </div>
           <div className="today-details">
             {todaysReminders.length > 0 ? (
@@ -75,17 +88,21 @@ const VaccineDashboard: React.FC = () => {
         </div>
       </section>
 
-   
       <section>
         <h3>Upcoming Vaccines</h3>
-        {upcomingReminders.length > 0 ? (
-          <div className="upcoming-cards-container">
-            {upcomingReminders.map((reminder, index) => (
+        <div className="upcoming-cards-container">
+          {upcomingReminders.length > 0 ? (
+            upcomingReminders.map((reminder, index) => (
               <div key={index} className="vaccine-card">
                 <div className="vaccine-date">
-                  <span className="vaccine-day">{new Date(reminder.preferredDate).getDate()}</span>
+                  <span className="vaccine-day">
+                    {new Date(reminder.preferredDate).getDate()}
+                  </span>
                   <span className="vaccine-month">
-                    {new Date(reminder.preferredDate).toLocaleString('default', { month: 'short' })}
+                    {new Date(reminder.preferredDate).toLocaleString(
+                      "default",
+                      { month: "short" }
+                    )}
                   </span>
                 </div>
                 <div className="vaccine-details">
@@ -93,38 +110,46 @@ const VaccineDashboard: React.FC = () => {
                   <p>{reminder.vaccineType}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p>No upcoming vaccines.</p>
-        )}
+            ))
+          ) : (
+            <p>No upcoming vaccines.</p>
+          )}
+        </div>
       </section>
 
-      
       <section>
         <h3>Vaccine History</h3>
-        {pastReminders.length > 0 ? (
-          <div className="history-cards-container">
-            {pastReminders.map((reminder, index) => (
+        <div className="history-cards-container">
+          {pastReminders.length > 0 ? (
+            pastReminders.map((reminder, index) => (
               <div key={index} className="vaccine-card">
                 <div className="vaccine-date">
-                  <span className="vaccine-day">{new Date(reminder.preferredDate).getDate()}</span>
+                  <span className="vaccine-day">
+                    {new Date(reminder.preferredDate).getDate()}
+                  </span>
                   <span className="vaccine-month">
-                    {new Date(reminder.preferredDate).toLocaleString('default', { month: 'short' })}
+                    {new Date(reminder.preferredDate).toLocaleString(
+                      "default",
+                      { month: "short" }
+                    )}
                   </span>
                 </div>
                 <div className="vaccine-details">
                   <h4>{reminder.vaccineName}</h4>
                   <p>{reminder.vaccineType}</p>
-                  <p><strong>Full Name:</strong> {reminder.fullName}</p>
-                  <p><strong>Reminder Date:</strong> {reminder.reminderDate}</p>
+                  <p>
+                    <strong>Full Name:</strong> {reminder.fullName}
+                  </p>
+                  <p>
+                    <strong>Reminder Date:</strong> {reminder.reminderDate}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p>No vaccine history.</p>
-        )}
+            ))
+          ) : (
+            <p>No vaccine history.</p>
+          )}
+        </div>
       </section>
     </div>
   );

@@ -1,51 +1,48 @@
 .footer {
   display: flex;
   flex-direction: row;
-  background-color: #074ad1;
+  background-color: #243642;
   color: white;
   padding: 20px;
   justify-content: space-between;
-   margin-top:35px;
-    
-  }
-  
-  .footer-content {
-    display:inline-flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-    justify-content: end;
-    
-  }
-  
-  .footer input {
-    padding: 10px;
-    margin-right: 5px;
-  }
-  
-  .footer button {
-    padding: 10px;
-    background-color:#013798;
-    border: none;
-    cursor: pointer;
-   
-  }
-  
-  .footer-links {
-    margin-top: 15px;
-  }
-  
-  .footer a {
-    color: #61dafb;
-    margin: 0 10px;
-    text-decoration: none;
-  }
- form{
-  display:flex;
+  margin-top: 35px;
+}
+
+.footer-content {
+  display: inline-flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  justify-content: end;
+}
+
+.footer input {
+  padding: 10px;
+  margin-right: 5px;
+  color: #3d3e3f;
+}
+
+.footer button {
+  padding: 10px;
+  background-color: #013798;
+  border: none;
+  cursor: pointer;
+}
+
+.footer-links {
+  margin-top: 15px;
+}
+
+.footer a {
+  color: #61dafb;
+  margin: 0 10px;
+  text-decoration: none;
+}
+form {
+  display: flex;
   flex-direction: column;
   justify-content: end;
-  gap:8px;
-  /* align-items: center; */
- }
- .footer .paragraph{
-  width:500px;
- } 
+  gap: 8px;
+}
+.footer .paragraph {
+  width: 500px;
+}

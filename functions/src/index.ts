@@ -1,43 +1,42 @@
-/*import { firestore } from 'firebase-functions/v2';
-import * as admin from 'firebase-admin'; // Import firebase-admin to access Firestore types
-import axios from 'axios';
+import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import SibApiV3Sdk from 'sib-api-v3-sdk';
 
-// Initialize Firebase Admin SDK
-admin.initializeApp();
+// Initialize Brevo API client
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
 
-// Replace with your OneSignal App ID and API Key
-const ONE_SIGNAL_APP_ID = 'YOUR_ONESIGNAL_APP_ID';
-const ONE_SIGNAL_API_KEY = 'YOUR_ONESIGNAL_API_KEY';
+const apiKey = defaultClient.authentications['api-key'];
+apiKey.apiKey = process.env.BREVO_API_KEY ; 
 
-export const sendEmailNotification = firestore.document('vaccineReminders/{userId}')
-  .onCreate(async (snap: admin.firestore.DocumentSnapshot, context) => {
-    // Type the snap parameter explicitly as a Firestore document snapshot
-    const reminderData = snap.data() as {
-      vaccineName: string;
-      reminderDate: string;
-    };
 
-    try {
-      // Send the email via OneSignal API
-      const response = await axios.post(
-        'https://onesignal.com/api/v1/notifications',
-        {
-          app_id: ONE_SIGNAL_APP_ID,
-          included_segments: ['All'], // Modify this to specific segments or users
-          email_subject: 'Vaccine Reminder',
-          email_body: `Hello, this is a reminder for your upcoming vaccine: ${reminderData.vaccineName} on ${reminderData.reminderDate}.`,
-          email_from_name: 'Vaccine Reminder Service',
-        },
-        {
-          headers: {
-            Authorization: `Basic ${ONE_SIGNAL_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
 
-      console.log('Email notification sent:', response.data);
-    } catch (error: any) {
-      console.error('Error sending email notification:', error.response?.data || error.message);
-    }
-  });*/
+export const sendVaccinationReminderEmail = onDocumentCreated('vaccineReminders/{reminderId}', async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) {
+    console.error('No data found in the document.');
+    return;
+  }
+
+  const vaccineData = snapshot.data();
+  const email = vaccineData.email; // Assuming email is part of the document
+  const vaccineName = vaccineData.vaccineName; // Assuming vaccine name is part of the document
+  const reminderDate = vaccineData.reminderDate; // Assuming reminder date is part of the document
+
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  sendSmtpEmail.to = [{ email }];
+  sendSmtpEmail.subject = 'Vaccination Reminder';
+  sendSmtpEmail.htmlContent = `
+    <h3>Reminder for Your Vaccine Appointment</h3>
+    <p>This is a reminder for your upcoming vaccine appointment:</p>
+    <p><strong>Vaccine:</strong> ${vaccineName}</p>
+    <p><strong>Reminder Date:</strong> ${reminderDate}</p>
+    <p>Stay safe and healthy!</p>
+  `;
+
+  try {
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log('Email sent successfully:', result);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+});

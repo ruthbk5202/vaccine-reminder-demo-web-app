@@ -1,7 +1,7 @@
 "use client";
 
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { auth, db } from "../firebaseConfig";
@@ -18,69 +18,66 @@ const Register: React.FC = () => {
     e.preventDefault();
     if (!isChecked) {
       alert("You must agree to the terms and conditions to proceed.");
-      return; 
+      return;
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-      
-   
-      const response = setDoc(doc(db, 'Users', user.uid), {
-        FirstName: '',
-        lastName: '',
+
+      const response = setDoc(doc(db, "Users", user.uid), {
+        FirstName: "",
+        lastName: "",
         email: email,
         isAdmin: false,
-        dob: '',
-        profilePicture: '',
+        dob: "",
+        profilePicture: "",
         id: user.uid,
       });
-      alert('User Created successfully');
-      router.push('/api');
+      alert("User Created successfully");
+      router.push("/api");
     } catch (error: any) {
       alert("Error found: " + error.message);
     }
   }
 
- 
-
   return (
     <div className="registration-container">
-      <div className="group-form-section">
+      <div className="grid-container">
         <div className="image-section">
-          <img
-            src="assets/images/chay.jpg" // Replace with your image URL
-            alt="Registration Illustration"
-            className="registration-image"
-          />
+          <img src="assets/svg/undraw.svg"></img>
         </div>
         <div className="form-section">
           <h1>Register</h1>
           <form id="signUp" onSubmit={handleSignUp}>
             <div className="form-group">
-              <label htmlFor="name">Name:</label>
+              <label htmlFor="name">Name</label>
               <input
                 type="text"
                 id="name"
                 name="name"
                 required
                 value={name}
-                onChange={(e) => setName(e.target.value)} // Update name state
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="email">Email:</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)} // Update email state
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password:</label>
+              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 id="password"
@@ -99,9 +96,8 @@ const Register: React.FC = () => {
               I agree to the terms and conditions
             </label>
             <div className="py-2"></div>
-            
+
             <button type="submit">Register</button>
-          
           </form>
         </div>
       </div>
@@ -109,4 +105,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register; 
+export default Register;

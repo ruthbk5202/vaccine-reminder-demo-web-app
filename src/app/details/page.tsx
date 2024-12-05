@@ -1,10 +1,10 @@
 "use client";
-import { addDoc, collection, getDocs } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import { getAuth } from "firebase/auth"; // Import Firebase Auth
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import Select from 'react-select';
-import { db } from '../firebaseConfig';
-import { getAuth } from 'firebase/auth'; // Import Firebase Auth
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
+import { db } from "../firebaseConfig";
 import "./details.css";
 
 interface Vaccine {
@@ -32,23 +32,23 @@ interface VaccineFormData {
 const VaccineForm: React.FC = () => {
   const [formData, setFormData] = useState<VaccineFormData>({
     vaccineName: null,
-    vaccineType: '',
-    fullName: '',
-    dateOfBirth: '',
-    email: '',
-    phone: '',
-    preferredDate: '',
-    reminderDate: '',
-    healthConditions: '',
-    notes: '',
+    vaccineType: "",
+    fullName: "",
+    dateOfBirth: "",
+    email: "",
+    phone: "",
+    preferredDate: "",
+    reminderDate: "",
+    healthConditions: "",
+    notes: "",
   });
 
   const [vaccineOptions, setVaccineOptions] = useState<Vaccine[]>([]);
 
   const fetchVaccineOptions = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'Vaccines'));
-      const options = querySnapshot.docs.map(doc => ({
+      const querySnapshot = await getDocs(collection(db, "Vaccines"));
+      const options = querySnapshot.docs.map((doc) => ({
         label: doc.data().name,
         value: doc.data().name,
         type: doc.data().type,
@@ -65,8 +65,8 @@ const VaccineForm: React.FC = () => {
   const customStyles = {
     menu: (provided: any) => ({
       ...provided,
-      maxHeight: '300px',
-      overflowY: 'auto',
+      maxHeight: "300px",
+      overflowY: "auto",
     }),
   };
 
@@ -74,7 +74,9 @@ const VaccineForm: React.FC = () => {
     fetchVaccineOptions();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -92,7 +94,7 @@ const VaccineForm: React.FC = () => {
       setFormData({
         ...formData,
         vaccineName: null,
-        vaccineType: '',
+        vaccineType: "",
       });
     }
   };
@@ -104,37 +106,37 @@ const VaccineForm: React.FC = () => {
 
     // Validations
     if (!formData.vaccineName) {
-      alert('Please select a Vaccine Name.');
+      alert("Please select a Vaccine Name.");
       return;
     }
 
     if (!formData.fullName.trim()) {
-      alert('Please enter your Full Name.');
+      alert("Please enter your Full Name.");
       return;
     }
 
     if (!/^\d{10}$/.test(formData.phone)) {
-      alert('Please enter a valid 10-digit phone number.');
+      alert("Please enter a valid 10-digit phone number.");
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      alert('Please enter a valid email.');
+      alert("Please enter a valid email.");
       return;
     }
 
     if (!formData.dateOfBirth) {
-      alert('Please enter your Date of Birth.');
+      alert("Please enter your Date of Birth.");
       return;
     }
 
     if (!formData.preferredDate) {
-      alert('Please select a Preferred Vaccination Date.');
+      alert("Please select a Preferred Vaccination Date.");
       return;
     }
 
     if (!formData.reminderDate) {
-      alert('Please select a Reminder Date.');
+      alert("Please select a Reminder Date.");
       return;
     }
 
@@ -148,33 +150,32 @@ const VaccineForm: React.FC = () => {
       }
 
       // Submit the form data along with userId
-      await addDoc(collection(db, 'vaccineReminders'), {
+      await addDoc(collection(db, "vaccineReminders"), {
         ...formData,
         vaccineName: formData.vaccineName?.value, // Only submit the vaccine name, but you can add more if needed
         userId: user.uid, // Add userId to associate event with logged-in user
       });
 
-      alert('Vaccine details submitted successfully!');
+      alert("Vaccine details submitted successfully!");
 
       // Reset form after submission
       setFormData({
         vaccineName: null,
-        vaccineType: '',
-        fullName: '',
-        dateOfBirth: '',
-        email: '',
-        phone: '',
-        preferredDate: '',
-        reminderDate: '',
-        healthConditions: '',
-        notes: '',
+        vaccineType: "",
+        fullName: "",
+        dateOfBirth: "",
+        email: "",
+        phone: "",
+        preferredDate: "",
+        reminderDate: "",
+        healthConditions: "",
+        notes: "",
       });
 
-      // Navigate after successful submission
       router.push("/home");
     } catch (error) {
-      console.error('Error adding document: ', error);
-      alert('Failed to submit vaccine details.');
+      console.error("Error adding document: ", error);
+      alert("Failed to submit vaccine details.");
     }
   };
 
@@ -182,7 +183,6 @@ const VaccineForm: React.FC = () => {
     <form onSubmit={handleSubmit}>
       <h2>Vaccine Reminder Form</h2>
 
-      {/* Vaccine Name Dropdown with Search */}
       <label>
         Vaccine Name:
         <Select
@@ -284,11 +284,7 @@ const VaccineForm: React.FC = () => {
 
       <label>
         Notes (Optional):
-        <textarea
-          name="notes"
-          value={formData.notes}
-          onChange={handleChange}
-        />
+        <textarea name="notes" value={formData.notes} onChange={handleChange} />
       </label>
 
       <button type="submit">Submit</button>
