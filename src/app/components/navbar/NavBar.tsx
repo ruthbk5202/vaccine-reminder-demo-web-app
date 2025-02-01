@@ -1,84 +1,88 @@
-"use client";
+import { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
+import { MdVaccines } from "react-icons/md";
 
-import { doc, getDoc } from "firebase/firestore";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { auth, db } from "../../firebaseConfig";
-import "./navbar.css";
+const NavBar = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-const NavBar: React.FC = () => {
-  const [firstName, setFirstName] = useState<string | null>(null);
-  const [isRegistered, setIsRegistered] = useState(false);
-  const [hasProfile, setHasProfile] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        try {
-          const userDocRef = doc(db, "Users", user.uid);
-          const userDoc = await getDoc(userDocRef);
-
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-
-            setFirstName(data.FirstName || null);
-            setIsRegistered(true);
-            setHasProfile(!!data.FirstName);
-          } else {
-            setIsRegistered(false);
-            setHasProfile(false);
-          }
-        } catch (error) {
-          console.error("Error fetching user document:", error);
-        }
-      } else {
-        setFirstName(null);
-        setIsRegistered(false);
-        setHasProfile(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const handleLogout = () => {
-    auth
-      .signOut()
-      .then(() => {
-        setFirstName(null);
-        setIsRegistered(false);
-        setHasProfile(false);
-        router.push("/");
-      })
-      .catch((error) => {
-        console.error("Error during logout:", error);
-      });
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   return (
-    <nav>
-      <div>
-        <div className="nav-icon">
-          <Link href="/">
-            <img src="assets/images/vaccine.png" alt="Vaccine App Logo" />
-          </Link>
-        </div>
-        <div className="links text-slate-400">
-          <Link href="/">The Vaccine App</Link>
+    <nav className="bg-white shadow-md fixed w-full z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            <MdVaccines className="text-3xl text-blue-600" />
+            <span className="ml-2 text-xl font-bold text-gray-800">
+              Vaccine Reminder
+            </span>
+          </div>
 
-          {isRegistered && hasProfile ? (
-            <div className="user-info">
-              <button onClick={handleLogout}>Logout</button>
-            </div>
-          ) : (
-            <Link href="/register">
-              <button>Register</button>
-            </Link>
-          )}
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-8">
+            <a
+              href="/login"
+              className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition duration-300"
+            >
+              Login
+            </a>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex items-center md:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              className="text-gray-800 hover:text-blue-600 focus:outline-none"
+            >
+              {isMobileMenuOpen ? (
+                <FaTimes className="text-2xl" />
+              ) : (
+                <FaBars className="text-2xl" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white shadow-lg">
+          <div className="px-4 pt-2 pb-4 space-y-2">
+            <a
+              href="#"
+              className="block text-gray-800 hover:text-blue-600 text-sm font-medium transition duration-300"
+            >
+              Home
+            </a>
+            <a
+              href="#"
+              className="block text-gray-800 hover:text-blue-600 text-sm font-medium transition duration-300"
+            >
+              About
+            </a>
+            <a
+              href="#"
+              className="block text-gray-800 hover:text-blue-600 text-sm font-medium transition duration-300"
+            >
+              Services
+            </a>
+            <a
+              href="#"
+              className="block text-gray-800 hover:text-blue-600 text-sm font-medium transition duration-300"
+            >
+              Contact
+            </a>
+            <a
+              href="#"
+              className="block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition duration-300 text-center"
+            >
+              Login
+            </a>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

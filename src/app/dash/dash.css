@@ -1,0 +1,236 @@
+/* Ensure the dashboard container takes up the full viewport */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  overflow: hidden; /* Prevent scrolling */
+}
+
+/* Menu bar styling */
+.menu-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+.menu-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.menu-icons .icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Content wrapper styling */
+.content-wrapper {
+  display: flex;
+  flex: 1; /* Take up remaining space */
+  overflow: hidden; /* Prevent scrolling */
+}
+
+/* Calendar section styling */
+.calendar-section {
+  flex: 1;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+/* Vaccination details section styling */
+.vaccination-details {
+  flex: 2;
+  padding: 20px;
+  overflow-y: auto; /* Allow scrolling for content */
+}
+
+/* Vaccine card styling */
+.vaccine-card {
+  background-color: #c51a1a;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.vaccine-card h4 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.vaccine-card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Calendar pin styling */
+.calendar-pin {
+  color: #b86bff;
+  font-size: 12px;
+}
+
+/* Loading state styling */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 20px;
+  color: #555;
+}
+
+/* Logout button styling */
+.logout-button {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.logout-button:hover {
+  background-color: #ff4c4c;
+}
+
+/* Container for vaccination details */
+.vaccination-details {
+  display: flex; /* Arrange sections horizontally */
+  gap: 20px; /* Add space between sections */
+  padding: 20px;
+  background-color: #f9f9f9; /* Light background for the container */
+  border-radius: 10px; /* Rounded corners */
+}
+
+/* Style for each section */
+.vaccine-section {
+  flex: 1; /* Each section takes equal width */
+  padding: 15px;
+  border-radius: 10px; /* Rounded corners for cards */
+  background-color: #fff; /* Default background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for card effect */
+}
+
+/* Different background colors for each section */
+.vaccine-section.today {
+  background-color: #e3f2fd; /* Light blue for today's vaccinations */
+}
+
+.vaccine-section.upcoming {
+  background-color: #fff3e0; /* Light orange for upcoming vaccines */
+}
+
+.vaccine-section.history {
+  background-color: #f5f5f5; /* Light gray for vaccine history */
+}
+
+/* Style for individual vaccine cards */
+.vaccine-card {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: #ffffff; /* White background for cards */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
+}
+
+.vaccine-card h4 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.vaccine-card p {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  /* Stack the content wrapper vertically on smaller screens */
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  /* Remove the border on the calendar section */
+  .calendar-section {
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* Adjust padding for smaller screens */
+  .calendar-section,
+  .vaccination-details {
+    padding: 15px;
+  }
+
+  /* Stack the vaccination details sections vertically */
+  .vaccination-details {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* Reduce font sizes for smaller screens */
+  .vaccine-card h4 {
+    font-size: 1em;
+  }
+
+  .vaccine-card p {
+    font-size: 0.8em;
+  }
+
+  /* Adjust menu bar padding and font size */
+  .menu-bar {
+    padding: 10px;
+  }
+
+  .menu-icons .icon {
+    font-size: 18px;
+  }
+
+  .logout-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Further reduce padding and font sizes for mobile devices */
+  .calendar-section,
+  .vaccination-details {
+    padding: 10px;
+  }
+
+  .vaccine-card h4 {
+    font-size: 0.9em;
+  }
+
+  .vaccine-card p {
+    font-size: 0.75em;
+  }
+
+  .menu-icons .icon {
+    font-size: 16px;
+  }
+
+  .logout-button {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}

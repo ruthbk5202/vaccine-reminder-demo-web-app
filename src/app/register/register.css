@@ -1,16 +1,18 @@
+/* Base styles */
 .registration-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background-color: #f9f9f9;
+  padding: 20px;
 }
 
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  width: 80%;
+  width: 100%;
   max-width: 1200px;
   background-color: white;
   border-radius: 8px;
@@ -22,13 +24,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px; /* Add padding to prevent content from sticking to the edges */
+  padding: 20px;
 }
 
 .image-section img {
-  max-width: 100%; /* Ensures the image fits within the container */
-  height: auto; /* Maintains aspect ratio */
-  object-fit: cover; /* Ensures the image covers the area if needed */
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 
 .form-section {
@@ -54,6 +56,7 @@
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 16px;
+  padding-right: 40px; /* Add space for the icon */
 }
 
 button {
@@ -67,6 +70,92 @@ button {
   font-size: 1rem;
 }
 
-button:hover {
-  background-color: #2929d6;
+
+/* Password input container */
+.password-input-container {
+  position: relative;
+}
+
+.password-input-wrapper {
+  
+  display: flex;
+  align-items: center;
+}
+
+/* Password toggle button */
+.password-toggle-button {
+  position: absolute;
+  right: 100px; /* Position the button on the right */
+  top: 70%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+justify-content: end;
+
+
+  color: #666; /* Icon color */
+}
+
+.password-toggle-button:hover {
+  color: #333; /* Icon color on hover */
+}
+
+/* Remove default button styling */
+.password-toggle-button:focus {
+  outline: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr; /* Stack columns vertically */
+  }
+
+  .image-section {
+    padding: 20px 0; /* Reduce padding */
+  }
+
+  .form-section {
+    padding: 20px; /* Reduce padding */
+  }
+
+  .form-group input {
+    font-size: 0.9rem; /* Smaller font size for inputs */
+  }
+
+  button {
+    font-size: 0.9rem; /* Smaller font size for button */
+  }
+
+  .password-toggle-button {
+    right: 0px; /* Adjust position for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .registration-container {
+    padding: 10px; /* Reduce padding */
+  }
+
+  .form-section h1 {
+    font-size: 1.5rem; /* Smaller heading font size */
+  }
+
+  .form-group label {
+    font-size: 0.9rem; /* Smaller label font size */
+  }
+
+  .form-group input {
+    font-size: 0.8rem; /* Smaller input font size */
+  }
+
+  button {
+    font-size: 0.8rem; /* Smaller button font size */
+  }
+
+  .password-toggle-button {
+    right: 0px; /* Adjust position for very small screens */
+  }
 }

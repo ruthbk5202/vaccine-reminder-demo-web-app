@@ -57,7 +57,7 @@
   background-color: #555;
 }
 .vaccine-card-scroll:hover {
-  transform: scale(1.05); /* Enlarges the card slightly */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Deepens the shadow */
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   background-color: #e9efec;
 }

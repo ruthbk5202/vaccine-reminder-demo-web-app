@@ -11,7 +11,7 @@ const UpdateProfile: React.FC = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
-  const [profilePicture, setProfilePicture] = useState<File | null>(null); // Store the file
+
   const router = useRouter();
 
   async function handleUpdateProfile(e: React.FormEvent<HTMLFormElement>) {
@@ -26,7 +26,6 @@ const UpdateProfile: React.FC = () => {
     try {
       let profilePictureURL = "";
 
-      // Upload profile picture if a file is selected
       if (profilePicture) {
         const storageRef = ref(
           storage,
@@ -36,14 +35,12 @@ const UpdateProfile: React.FC = () => {
         profilePictureURL = await getDownloadURL(storageRef);
       }
 
-      // Update Firestore document
       const userDocRef = doc(db, "Users", user.uid);
 
       await updateDoc(userDocRef, {
         FirstName: firstName,
-        LastName: lastName,
+        lastName: lastName,
         dob: dob,
-        profilePicture: profilePictureURL, // Save the uploaded URL
       });
 
       alert("Profile updated successfully!");
