@@ -1,0 +1,36 @@
+/* Apply sans-serif font and black color to the entire page */
+.full-width {
+    font-family: sans-serif;
+    color: black;
+    width:100%;
+   margin-bottom: 32px;
+  }
+  
+  /* Ensure the Container takes full width */
+  .full-width-container {
+    max-width: 100% !important; /* Override Material-UI's default max-width */
+    padding: 0 16px; /* Add some padding to avoid content touching the edges */
+  }
+  
+  /* Style for the title */
+  .terms-title {
+    margin-bottom: 2rem; 
+    color: azure;
+    background-color: blueviolet;
+    background-color: #8b5dff;
+    width: 100%;
+    height: 200px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 50% 35%;
+    border-bottom-right-radius: 50% 90%;
+  }
+  
+  /* Style for links */
+  a {
+    color: #3f51b5; /* Match Material-UI's primary color */
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }

@@ -11,7 +11,7 @@ const UpdateProfile: React.FC = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
-  const [profilePicture, setProfilePicture] = useState<File | null>(null); // Store the file
+
   const router = useRouter();
 
   async function handleUpdateProfile(e: React.FormEvent<HTMLFormElement>) {
@@ -39,9 +39,8 @@ const UpdateProfile: React.FC = () => {
 
       await updateDoc(userDocRef, {
         FirstName: firstName,
-        LastName: lastName,
+        lastName: lastName,
         dob: dob,
-        profilePicture: profilePictureURL,
       });
 
       alert("Profile updated successfully!");

@@ -1,0 +1,34 @@
+
+
+.privacy {
+    background-color: #8b5dff;
+    width: 100%;
+    height: 200px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 50% 35%;
+    border-bottom-right-radius: 50% 90%;
+
+  }
+.privacy h1{
+    align-items:start;
+    color:aliceblue;
+    padding-top: 32px;
+}
+  /* Ensure the Box component takes full width */
+.full-width {
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: black;
+  }
+  
+  /* Ensure the Container component takes full width */
+  .full-width-container {
+    max-width: 100% !important; /* Override Material-UI's default max-width */
+    padding: 0 16px; 
+    margin-bottom: 32px;/* Add some padding to avoid content touching the edges */
+  }
+  
+  /* Optional: Add some spacing for better readability */
+  .privacy {
+    margin-bottom: 2rem; /* Add space below the title */
+  }

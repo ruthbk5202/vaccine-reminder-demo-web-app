@@ -1,17 +1,20 @@
 "use client";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import React, { useState } from "react";
-import { auth, db } from "../firebaseConfig";
-import "./login.css";
 
-const Login: React.FC = () => {
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { auth } from "../firebaseConfig";
+import "./login.css"; // Ensure you have a corresponding CSS file for styling
+
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -19,51 +22,52 @@ const Login: React.FC = () => {
         password
       );
       const user = userCredential.user;
-
-      const userDocRef = doc(db, "Users", user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (userDoc.exists()) {
-        console.log("User data:", userDoc.data());
-      } else {
-        console.log("No user data found in Firestore");
-      }
+      alert("Login successful!");
+      router.push("/dash"); // Redirect to dashboard
     } catch (error: any) {
       setError(error.message);
+      alert("Error: " + error.message);
     }
   };
 
   return (
-    <div>
-      <div className="form-container">
-        <form onSubmit={handleLogin}>
+    <div className="login-container">
+      <div className="grid-container">
+        <div className="image-section">
+          <img src="assets/svg/undraw.svg" alt="Login Illustration" />
+        </div>
+        <div className="form-section">
           <h1>Login</h1>
-          <div>
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            ></input>
-          </div>
-          <div>
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            ></input>
-          </div>
-          <div>
+          <form id="login" onSubmit={handleLogin}>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            {error && <p className="error-message">{error}</p>}
             <button type="submit">Login</button>
-          </div>
-          {error && <p>{error}</p>}
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default LoginPage;
