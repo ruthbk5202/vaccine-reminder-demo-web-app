@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import { onAuthStateChanged } from "firebase/auth";
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { useRouter } from "next/navigation";
@@ -7,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { auth, db } from "../firebaseConfig";
 import "./details.css";
+require("dotenv").config();
 
 interface Vaccine {
   label: string;
@@ -25,9 +25,7 @@ interface VaccineFormData {
   email: string;
   phone: string;
   preferredDate: string;
-  preferredTime: string;
-  reminderDate: string;
-  reminderTime: string;
+  reminderDate: string; // This will now include both date and time
   healthConditions?: string;
   notes?: string;
 }
@@ -41,18 +39,17 @@ const VaccineForm: React.FC = () => {
     email: "",
     phone: "",
     preferredDate: "",
-    preferredTime: "",
     reminderDate: "",
-    reminderTime: "",
     healthConditions: "",
     notes: "",
   });
 
   const [vaccineOptions, setVaccineOptions] = useState<Vaccine[]>([]);
   const [isAuthReady, setIsAuthReady] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Check authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -67,7 +64,6 @@ const VaccineForm: React.FC = () => {
     return () => unsubscribe();
   }, [router]);
 
-  // Fetch vaccine options from Firestore
   const fetchVaccineOptions = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "Vaccines"));
@@ -76,12 +72,13 @@ const VaccineForm: React.FC = () => {
         value: doc.data().name,
         type: doc.data().type,
         age_group: doc.data().age_group,
-        protection_against: doc.data().protection_Against,
+        protection_against: doc.data().protection_against,
         doses: doc.data().doses,
       }));
       setVaccineOptions(options);
     } catch (error) {
       console.error("Error fetching vaccine data: ", error);
+      setError("Failed to fetch vaccine data. Please try again.");
     }
   };
 
@@ -89,7 +86,6 @@ const VaccineForm: React.FC = () => {
     fetchVaccineOptions();
   }, []);
 
-  // Handle input changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -99,7 +95,6 @@ const VaccineForm: React.FC = () => {
     });
   };
 
-  // Handle vaccine selection change
   const handleVaccineChange = (option: any) => {
     if (option) {
       setFormData({
@@ -116,23 +111,7 @@ const VaccineForm: React.FC = () => {
     }
   };
 
-  // Validate email
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Ensure user is authenticated
-    if (!auth.currentUser) {
-      alert("You must be logged in to submit the form.");
-      router.push("/login");
-      return;
-    }
-
-    // Basic validation
+  const validateForm = () => {
     if (
       !formData.vaccineName ||
       !formData.fullName ||
@@ -140,33 +119,57 @@ const VaccineForm: React.FC = () => {
       !formData.email ||
       !formData.phone ||
       !formData.preferredDate ||
-      !formData.preferredTime ||
-      !formData.reminderDate ||
-      !formData.reminderTime
+      !formData.reminderDate
     ) {
       alert("Please fill out all required fields.");
+      return false;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert("Please enter a valid email address.");
+      return false;
+    }
+
+    // Validate phone number format (basic validation)
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      alert("Please enter a valid 10-digit phone number.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
       return;
     }
 
-    // Validate email
-    if (!validateEmail(formData.email)) {
-      alert("Please enter a valid email address.");
+    setIsSubmitting(true);
+    setError(null);
+
+    if (!auth.currentUser) {
+      alert("You must be logged in to submit the form.");
+      router.push("/login");
+      setIsSubmitting(false);
       return;
     }
 
     try {
       // Save data to Firestore
       const docRef = await addDoc(collection(db, "VaccineReminders"), {
-        vaccineName: formData.vaccineName.label,
+        vaccineName: formData.vaccineName,
         vaccineType: formData.vaccineType,
         fullName: formData.fullName,
         dateOfBirth: formData.dateOfBirth,
         email: formData.email,
         phone: formData.phone,
         preferredDate: formData.preferredDate,
-        preferredTime: formData.preferredTime,
         reminderDate: formData.reminderDate,
-        reminderTime: formData.reminderTime,
         healthConditions: formData.healthConditions || "",
         notes: formData.notes || "",
         userId: auth.currentUser.uid,
@@ -176,27 +179,33 @@ const VaccineForm: React.FC = () => {
 
       // Prepare email data
       const emailData = {
-        to_email: formData.email,
-        to_name: formData.fullName,
-        message: `Your vaccine reminder for ${formData.vaccineName.label} has been scheduled for ${formData.preferredDate} at ${formData.preferredTime}. We wish you good health and a better life. Thank you for choosing us!`,
+        sender_email: "vreminder15@gmail.com",
+        receiver_email: formData.email,
+        subject: `Vaccine Reminder for ${formData.fullName}`,
+        body: `Dear ${formData.fullName},\n\nThis is a reminder for your upcoming vaccination of ${formData.vaccineName?.label} on ${formData.reminderDate}. Please make sure to be on time.\n\nRegards, Vaccine Reminder System`,
+        smtp_username: process.env.NEXT_PUBLIC_SMTP_USERNAME, // Use environment variable
+        smtp_password: process.env.NEXT_PUBLIC_SMTP_PASSWORD, // Use environment variable
+        reminder_date: new Date(formData.reminderDate).toISOString(), // Ensure proper date format
       };
 
-      // Send email using Nodemailer API
-      const emailResponse = await axios.post(
-        "D:/firebase/vaccine-app/src/app/pages/api/SendEmail.js",
-        emailData
-      );
+      // Send data to backend to schedule email
+      const response = await fetch("http://127.0.0.1:5000/schedule-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailData),
+      });
 
-      // Check if the email was sent successfully
-      if (emailResponse.status === 200) {
-        alert(
-          "Vaccine details submitted and confirmation email sent successfully!"
-        );
-      } else {
-        throw new Error("Failed to send email.");
+      if (!response.ok) {
+        throw new Error("Failed to schedule reminder email.");
       }
 
-      // Reset form after successful submission
+      alert(
+        "Vaccine details submitted and reminder email scheduled successfully!"
+      );
+
+      // Reset form
       setFormData({
         vaccineName: null,
         vaccineType: "",
@@ -205,34 +214,26 @@ const VaccineForm: React.FC = () => {
         email: "",
         phone: "",
         preferredDate: "",
-        preferredTime: "",
         reminderDate: "",
-        reminderTime: "",
         healthConditions: "",
         notes: "",
       });
 
       // Redirect to dashboard
-      router.push("/dash");
+      // router.push("/dash");
     } catch (error) {
-      console.error("Error adding document or sending email: ", error);
-
-      // Handle errors
-      if (error instanceof Error) {
-        if (error.message.includes("Failed to send email")) {
-          alert(
-            "Vaccine details submitted, but the confirmation email failed to send. Please check your email address and try again."
-          );
-        } else {
-          alert("Failed to submit vaccine details. Please try again.");
-        }
-      }
+      console.error("Error adding document or scheduling email: ", error);
+      setError("Failed to submit vaccine details. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Vaccine Reminder Form</h2>
+
+      {error && <div className="error-message">{error}</div>}
 
       <label>
         Vaccine Name:
@@ -243,6 +244,7 @@ const VaccineForm: React.FC = () => {
           placeholder="Select a vaccine..."
           isSearchable={true}
           required
+          aria-label="Select a vaccine"
         />
       </label>
 
@@ -255,6 +257,7 @@ const VaccineForm: React.FC = () => {
           onChange={handleChange}
           required
           readOnly
+          aria-label="Vaccine Type"
         />
       </label>
 
@@ -266,6 +269,7 @@ const VaccineForm: React.FC = () => {
           value={formData.fullName}
           onChange={handleChange}
           required
+          aria-label="Full Name"
         />
       </label>
 
@@ -277,6 +281,7 @@ const VaccineForm: React.FC = () => {
           value={formData.dateOfBirth}
           onChange={handleChange}
           required
+          aria-label="Date of Birth"
         />
       </label>
 
@@ -288,6 +293,7 @@ const VaccineForm: React.FC = () => {
           value={formData.email}
           onChange={handleChange}
           required
+          aria-label="Email"
         />
       </label>
 
@@ -299,6 +305,7 @@ const VaccineForm: React.FC = () => {
           value={formData.phone}
           onChange={handleChange}
           required
+          aria-label="Phone"
         />
       </label>
 
@@ -310,39 +317,19 @@ const VaccineForm: React.FC = () => {
           value={formData.preferredDate}
           onChange={handleChange}
           required
+          aria-label="Preferred Vaccination Date"
         />
       </label>
 
       <label>
-        Preferred Vaccination Time:
+        Reminder Date and Time:
         <input
-          type="time"
-          name="preferredTime"
-          value={formData.preferredTime}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Reminder Date:
-        <input
-          type="date"
+          type="datetime-local"
           name="reminderDate"
           value={formData.reminderDate}
           onChange={handleChange}
           required
-        />
-      </label>
-
-      <label>
-        Reminder Time:
-        <input
-          type="time"
-          name="reminderTime"
-          value={formData.reminderTime}
-          onChange={handleChange}
-          required
+          aria-label="Reminder Date and Time"
         />
       </label>
 
@@ -353,15 +340,23 @@ const VaccineForm: React.FC = () => {
           name="healthConditions"
           value={formData.healthConditions}
           onChange={handleChange}
+          aria-label="Health Conditions"
         />
       </label>
 
       <label>
         Notes (Optional):
-        <textarea name="notes" value={formData.notes} onChange={handleChange} />
+        <textarea
+          name="notes"
+          value={formData.notes}
+          onChange={handleChange}
+          aria-label="Notes"
+        />
       </label>
 
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={isSubmitting} aria-label="Submit Form">
+        {isSubmitting ? "Submitting..." : "Submit"}
+      </button>
     </form>
   );
 };

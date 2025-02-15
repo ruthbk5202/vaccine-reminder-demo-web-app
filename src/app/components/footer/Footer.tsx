@@ -1,9 +1,11 @@
 "use client";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import {
   Box,
   Button,
   Container,
-  Grid,
+  IconButton,
   Link as MuiLink,
   TextField,
   Typography,
@@ -69,9 +71,18 @@ const Footer: React.FC = () => {
   return (
     <FooterContainer>
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          {/* App Description */}
-          <Grid item xs={12} md={6}>
+        {/* Main Content in Flex Row */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" }, // Column on mobile, row on desktop
+            gap: 4,
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+          }}
+        >
+          {/* About Section */}
+          <Box sx={{ flex: 1 }}>
             <Typography variant="h6" gutterBottom sx={{ color: "#3f51b5" }}>
               Vaccine Reminder
             </Typography>
@@ -80,10 +91,44 @@ const Footer: React.FC = () => {
               paper counterparts globally. Your personal digital vaccine record
               which you can never lose. From birth to adulthood.
             </Typography>
-          </Grid>
+          </Box>
+
+          {/* Contact and Social Media Section */}
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6" gutterBottom sx={{ color: "#3f51b5" }}>
+              CONTACT US
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#555", mb: 2 }}>
+              Have questions? Reach out to us!
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#555", mb: 2 }}>
+              Phone:{" "}
+              <FooterLink href="tel:+977 9826357274">
+                +977 9826357274
+              </FooterLink>
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <IconButton
+                aria-label="Facebook"
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FacebookIcon sx={{ color: "#3f51b5" }} />
+              </IconButton>
+              <IconButton
+                aria-label="LinkedIn"
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <LinkedInIcon sx={{ color: "#3f51b5" }} />
+              </IconButton>
+            </Box>
+          </Box>
 
           {/* Newsletter Section */}
-          <Grid item xs={12} md={6}>
+          <Box sx={{ flex: 1 }}>
             <Typography variant="h6" gutterBottom sx={{ color: "#3f51b5" }}>
               NEWSLETTER
             </Typography>
@@ -128,8 +173,8 @@ const Footer: React.FC = () => {
                 {message}
               </Typography>
             )}
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
 
         {/* Footer Links */}
         <Box

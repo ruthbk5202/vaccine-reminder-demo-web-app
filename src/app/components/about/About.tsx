@@ -1,8 +1,14 @@
 "use client";
-import { Avatar, Box, Container, Grid, Paper, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Container,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { styled } from "@mui/system";
 
-// Styled components using MUI v5 `styled` API
 const Root = styled("div")(({ theme }) => ({
   padding: theme.spacing(8, 2),
   background: "linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)",
@@ -57,55 +63,44 @@ const AboutUs = () => {
   return (
     <Root>
       <Container maxWidth="lg">
-        {/* Team Section */}
+        <SectionTitle variant="h2">Meet Our Team</SectionTitle>
 
-        <SectionTitle variant="h2" id="meet-our-team">Meet Our Team</SectionTitle>
-        <Grid container spacing={6}>
-          {/* Team Member 1 */}
-          <Grid item xs={12} sm={6} md={4}>
-            <TeamMember>
-              <StyledAvatar alt="Drisya Giri" src="assets/images/drisya.jpg" />
-              <Typography variant="h6" gutterBottom>
-                Drisya Giri
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                Frontend Developer
-              </Typography>
-            </TeamMember>
-          </Grid>
+        {/* Using Stack instead of Grid */}
+        <Stack
+          spacing={6}
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="center"
+        >
+          <TeamMember>
+            <StyledAvatar alt="Drisya Giri" src="assets/images/drisya.jpg" />
+            <Typography variant="h6" gutterBottom>
+              Drisya Giri
+            </Typography>
+            <Typography variant="subtitle1" color="textSecondary">
+              Frontend Developer
+            </Typography>
+          </TeamMember>
 
-          {/* Team Member 2 */}
-          <Grid item xs={12} sm={6} md={4}>
-            <TeamMember>
-              <StyledAvatar
-                alt="Saurab Katuwal"
-                src="assets/images/saurab.jpg"
-              />
-              <Typography variant="h6" gutterBottom>
-                Saurab Katuwal
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                UI/UX Designer
-              </Typography>
-            </TeamMember>
-          </Grid>
+          <TeamMember>
+            <StyledAvatar alt="Saurab Katuwal" src="assets/images/saurab.jpg" />
+            <Typography variant="h6" gutterBottom>
+              Saurab Katuwal
+            </Typography>
+            <Typography variant="subtitle1" color="textSecondary">
+              UI/UX Designer
+            </Typography>
+          </TeamMember>
 
-          {/* Team Member 3 */}
-          <Grid item xs={12} sm={6} md={4}>
-            <TeamMember>
-              <StyledAvatar
-                alt="Ruth Bishwakarma"
-                src="assets/images/ruth.jpg"
-              />
-              <Typography variant="h6" gutterBottom>
-                Ruth Bishwakarma
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                Backend Developer
-              </Typography>
-            </TeamMember>
-          </Grid>
-        </Grid>
+          <TeamMember>
+            <StyledAvatar alt="Ruth Bishwakarma" src="assets/images/ruth.jpg" />
+            <Typography variant="h6" gutterBottom>
+              Ruth Bishwakarma
+            </Typography>
+            <Typography variant="subtitle1" color="textSecondary">
+              Backend Developer
+            </Typography>
+          </TeamMember>
+        </Stack>
       </Container>
     </Root>
   );

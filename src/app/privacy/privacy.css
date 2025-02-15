@@ -14,21 +14,20 @@
     color:aliceblue;
     padding-top: 32px;
 }
-  /* Ensure the Box component takes full width */
+ 
 .full-width {
     width: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: black;
   }
   
-  /* Ensure the Container component takes full width */
+ 
   .full-width-container {
-    max-width: 100% !important; /* Override Material-UI's default max-width */
+    max-width: 100% !important; 
     padding: 0 16px; 
-    margin-bottom: 32px;/* Add some padding to avoid content touching the edges */
+    margin-bottom: 32px;
   }
   
-  /* Optional: Add some spacing for better readability */
   .privacy {
-    margin-bottom: 2rem; /* Add space below the title */
+    margin-bottom: 2rem; 
   }

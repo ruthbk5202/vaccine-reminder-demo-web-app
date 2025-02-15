@@ -1,11 +1,11 @@
 "use client";
 import { Box, Container, Typography } from "@mui/material";
-import "./terms.css"; // Import your CSS file for styling
+import "./terms.css"; 
 
 const TermsOfService = () => {
   return (
     <Box className="full-width">
-      {/* Terms of Service Content */}
+     
       <Container maxWidth="md" sx={{ py: 6 }} className="full-width-container">
         <Typography
           variant="h3"
@@ -136,7 +136,7 @@ const TermsOfService = () => {
             contact us at:
           </Typography>
           <Typography variant="body1" sx={{ color: "black" }}>
-            <strong>Email:</strong> [vaccineReminder8@gmail.com]
+            <strong>Email:</strong> [vreminder15@gmail.com]
             <br />
           </Typography>
         </Box>

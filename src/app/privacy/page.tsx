@@ -1,11 +1,12 @@
 "use client";
 import { Box, Container, Typography } from "@mui/material";
+import VaccineImp from "../components/impvaccine/VaccineImp";
 import "./privacy.css";
 
 const PrivacyPolicy = () => {
   return (
     <Box className="full-width">
-      {/* Privacy Policy Content */}
+   
       <Container maxWidth="md" sx={{ py: 6 }} className="full-width-container">
         <Typography
           variant="h3"

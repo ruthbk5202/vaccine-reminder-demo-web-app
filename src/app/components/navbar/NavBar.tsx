@@ -1,8 +1,23 @@
+import { Avatar } from "@mui/material";
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { MdVaccines } from "react-icons/md";
 
-const NavBar = () => {
+interface NavBarProps {
+  profilePicture: string | null;
+  firstName: string | null;
+  isRegistered: boolean;
+  hasProfile: boolean;
+  hasEvents: boolean;
+}
+
+const NavBar = ({
+  profilePicture,
+  firstName,
+  isRegistered,
+  hasProfile,
+  hasEvents,
+}: NavBarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -20,7 +35,6 @@ const NavBar = () => {
             </span>
           </div>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             <a
               href="/login"
@@ -30,7 +44,6 @@ const NavBar = () => {
             </a>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
             <button
               onClick={toggleMobileMenu}
@@ -46,10 +59,36 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white shadow-lg">
           <div className="px-4 pt-2 pb-4 space-y-2">
+            {isRegistered ? (
+              <>
+                {profilePicture && (
+                  <div className="flex items-center space-x-2">
+                    <Avatar src={profilePicture} alt="Profile" />
+                    {firstName && (
+                      <span className="text-gray-800 font-medium">
+                        {firstName}
+                      </span>
+                    )}
+                  </div>
+                )}
+                <a
+                  href="/dashboard"
+                  className="block text-gray-800 hover:text-blue-600 text-sm font-medium transition duration-300"
+                >
+                  Dashboard
+                </a>
+              </>
+            ) : (
+              <a
+                href="/login"
+                className="block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition duration-300 text-center"
+              >
+                Login
+              </a>
+            )}
             <a
               href="#"
               className="block text-gray-800 hover:text-blue-600 text-sm font-medium transition duration-300"
@@ -73,12 +112,6 @@ const NavBar = () => {
               className="block text-gray-800 hover:text-blue-600 text-sm font-medium transition duration-300"
             >
               Contact
-            </a>
-            <a
-              href="#"
-              className="block bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition duration-300 text-center"
-            >
-              Login
             </a>
           </div>
         </div>

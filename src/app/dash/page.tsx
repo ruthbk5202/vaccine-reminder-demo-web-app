@@ -1,224 +1,344 @@
 "use client";
 import { signOut } from "firebase/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
-import type { Value } from "react-calendar/dist/cjs/shared/types"; // Import Calendar and Value
 import "react-calendar/dist/Calendar.css";
+import type { Value } from "react-calendar/dist/cjs/shared/types";
+import { BsFillCalendar2EventFill } from "react-icons/bs";
 import {
   FaCalendarAlt,
-  FaCog,
+  FaCamera,
+  FaHistory,
   FaHome,
   FaSignOutAlt,
-  FaUser,
+  FaSyringe,
+  FaUserCircle,
 } from "react-icons/fa";
-import { auth, db } from "../firebaseConfig";
+import { auth, db, storage } from "../firebaseConfig";
 import "./dash.css";
 
-interface vaccineReminders {
-  vaccineName: string;
+interface VaccineReminders {
+  id: string;
+  vaccineName: { name: string } | string;
   vaccineType: string;
   fullName: string;
-  dateOfBirth: string;
-  email: string;
-  phone: string;
   preferredDate: string;
-  reminderDate: string;
+  userId: string;
   healthConditions?: string;
   notes?: string;
-  userId: string;
+  email?: string;
+  phone?: string;
+  reminderDate?: string;
+  confirmed?: boolean;
 }
 
 const VaccineDashboard: React.FC = () => {
-  const [events, setEvents] = useState<vaccineReminders[]>([]);
-  const [today, setToday] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
-  const [calendarDate, setCalendarDate] = useState<Date>(new Date());
+  const [events, setEvents] = useState<VaccineReminders[]>([]);
+  const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [calendarDate, setCalendarDate] = useState<Date>(new Date());
+  const [activeSection, setActiveSection] = useState<
+    "today" | "upcoming" | "history"
+  >("today");
+  const [profilePicture, setProfilePictureUrl] = useState<string | null>(null);
 
-  // Key for local storage
-  const LOCAL_STORAGE_KEY = "vaccineReminders";
+  const router = useRouter();
+  const today = new Date().toISOString().split("T")[0];
 
-  // Fetch data from Firestore
-  const fetchData = async () => {
-    try {
-      // Check if the user is authenticated
-      if (!auth.currentUser) {
-        console.error("No authenticated user found.");
-        return;
-      }
-
-      // Query Firestore for documents where userId matches the current user's UID
-      const q = query(
-        collection(db, "vaccineReminders"),
-        where("userId", "==", auth.currentUser.uid)
-      );
-      const querySnapshot = await getDocs(q);
-
-      // Map the documents to the VaccineReminders interface
-      const data = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as unknown as vaccineReminders[];
-
-      // Set the fetched data to the state
-      setEvents(data);
-
-      // Save the data to local storage
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    } finally {
-      setLoading(false); // Set loading to false after fetching
-    }
-  };
-
-  // Load data from local storage on component mount
-  useEffect(() => {
-    const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedData) {
-      setEvents(JSON.parse(savedData));
-      setLoading(false); // Data is already loaded from local storage
-    } else {
-      fetchData(); // Fetch data from Firestore if local storage is empty
-    }
-  }, []);
-
-  // Normalize date for comparison
   const normalizeDate = (date: string) => date.split("T")[0];
 
-  // Filter data for today, upcoming, and past vaccinations
   const todaysReminders = events.filter(
-    (reminder) => normalizeDate(reminder.preferredDate) === today
+    (reminder) =>
+      normalizeDate(reminder.preferredDate) === today && !reminder.confirmed
   );
   const upcomingReminders = events.filter(
-    (reminder) => normalizeDate(reminder.preferredDate) > today
+    (reminder) =>
+      normalizeDate(reminder.preferredDate) > today && !reminder.confirmed
   );
   const pastReminders = events.filter(
-    (reminder) => normalizeDate(reminder.preferredDate) < today
+    (reminder) =>
+      normalizeDate(reminder.preferredDate) < today && !reminder.confirmed
   );
 
-  // Highlight vaccination dates on the calendar
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!auth.currentUser) return;
+
+        const userId = auth.currentUser.uid;
+
+        const remindersQuery = query(
+          collection(db, "VaccineReminders"),
+          where("userId", "==", userId)
+        );
+        const querySnapshot = await getDocs(remindersQuery);
+        const remindersData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as VaccineReminders[];
+
+        setEvents(remindersData);
+
+        const userDocRef = doc(db, "Users", userId);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          setUsername(userData?.FirstName || "User");
+          setProfilePictureUrl(userData?.profilePicture || null);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file && auth.currentUser) {
+      try {
+        console.log("File selected:", file.name);
+
+        const storageRef = ref(
+          storage,
+          `profilePictures/${auth.currentUser.uid}`
+        );
+        console.log("Storage reference:", storageRef.fullPath);
+
+        await uploadBytes(storageRef, file);
+        console.log("File uploaded to Firebase Storage.");
+
+        const url = await getDownloadURL(storageRef);
+        console.log("Download URL from Firebase Storage:", url);
+
+        const userDocRef = doc(db, "Users", auth.currentUser.uid);
+        console.log("Firestore document reference:", userDocRef.path);
+
+        await updateDoc(userDocRef, { profilePicture: url });
+        console.log("Firestore document updated successfully!");
+
+        setProfilePictureUrl(url);
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
+      }
+    } else {
+      console.error("No file selected or user not authenticated.");
+    }
+  };
+
   const tileContent = ({ date }: { date: Date }) => {
     const dateStr = date.toISOString().split("T")[0];
-    const hasVaccination = events.some(
-      (reminder) => normalizeDate(reminder.preferredDate) === dateStr
-    );
-    return hasVaccination ? <FaCalendarAlt className="calendar-pin" /> : null;
+    return events.some(
+      (reminder) =>
+        normalizeDate(reminder.preferredDate) === dateStr && !reminder.confirmed
+    ) ? (
+      <FaCalendarAlt className="calendar-pin" />
+    ) : null;
   };
 
-  // Handle date change for the calendar
-  const handleDateChange = (
-    value: Value,
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleDateChange = (value: Value) => {
     if (value instanceof Date) {
-      setCalendarDate(value); // Update the calendar date state
-    } else if (Array.isArray(value) && value[0] instanceof Date) {
-      setCalendarDate(value[0]); // Handle range selection (use the first date)
-    } else if (value === null) {
-      // Handle null case (optional)
-      console.log("Date selection was cleared.");
+      setCalendarDate(value);
     }
   };
 
-  // Handle logout
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Sign out the user
-      localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear local storage
-      console.log("User signed out successfully.");
-      window.location.href = "/"; // Redirect to login page
+      await signOut(auth);
+      router.push("/");
     } catch (error) {
-      console.error("Error signing out: ", error);
+      console.error("Error signing out:", error);
     }
   };
 
-  // Display loading state while fetching data
+  const confirmVaccination = async (reminderId: string) => {
+    try {
+      const reminderDocRef = doc(db, "VaccineReminders", reminderId);
+      await updateDoc(reminderDocRef, {
+        confirmed: true,
+      });
+      console.log("Vaccination confirmed!");
+
+      setEvents((prevEvents) =>
+        prevEvents.map((reminder) =>
+          reminder.id === reminderId
+            ? { ...reminder, confirmed: true }
+            : reminder
+        )
+      );
+    } catch (error) {
+      console.error("Error confirming vaccination:", error);
+    }
+  };
+
+  const deleteVaccinationReminder = async (reminderId: string) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this reminder?"
+      );
+      if (!confirmDelete) return;
+
+      const reminderDocRef = doc(db, "VaccineReminders", reminderId);
+      await deleteDoc(reminderDocRef);
+      console.log("Vaccination reminder deleted!");
+
+      setEvents((prevEvents) =>
+        prevEvents.filter((reminder) => reminder.id !== reminderId)
+      );
+    } catch (error) {
+      console.error("Error deleting vaccination reminder:", error);
+    }
+  };
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
 
   return (
     <div className="dashboard-container">
-      {/* Menu Bar */}
-      <div className="menu-bar">
-        <h1>Vaccine Dashboard</h1>
-        <div className="menu-icons">
-          <FaHome className="icon" />
-          <FaUser className="icon" />
-          <FaCog className="icon" />
+      <nav className="sidebar">
+        <div className="sidebar-header">
+          <div className="profile-icon-container">
+            <label
+              htmlFor="profile-picture-input"
+              className="profile-icon-label"
+            >
+              {profilePicture ? (
+                <img
+                  src={profilePicture}
+                  alt="Profile"
+                  className="profile-icon"
+                />
+              ) : (
+                <FaUserCircle className="profile-icon" />
+              )}
+              <div className="camera-icon">
+                <FaCamera />
+              </div>
+            </label>
+            <input
+              id="profile-picture-input"
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
+          </div>
+          {/* Display the username here */}
+          {username && <div className="username">{username}</div>}
         </div>
-        <div className="profile-section">
-          <span>{auth.currentUser?.email}</span>
-          <button onClick={handleLogout} className="logout-button">
-            <FaSignOutAlt /> Logout
-          </button>
-        </div>
+        <ul className="sidebar-menu">
+          <li
+            className={activeSection === "today" ? "active" : ""}
+            onClick={() => setActiveSection("today")}
+          >
+            <FaHome className="menu-icon" />
+            <span>Today's Vaccination</span>
+          </li>
+          <li
+            className={activeSection === "upcoming" ? "active" : ""}
+            onClick={() => setActiveSection("upcoming")}
+          >
+            <FaSyringe className="menu-icon" />
+            <span>Upcoming Vaccines</span>
+          </li>
+          <li
+            className={activeSection === "history" ? "active" : ""}
+            onClick={() => setActiveSection("history")}
+          >
+            <FaHistory className="menu-icon" />
+            <span>Vaccine History</span>
+          </li>
+          <li onClick={() => router.push("/details")}>
+            <BsFillCalendar2EventFill className="menu-icon" />
+            <span>Add Event</span>
+          </li>
+        </ul>
+
+        <button onClick={handleLogout} className="sidebar-button logout-button">
+          <FaSignOutAlt className="button-icon" />
+          <span>Logout</span>
+        </button>
+      </nav>
+
+      <div className="calendar-section">
+        <h3>Calendar</h3>
+        <Calendar
+          onChange={handleDateChange}
+          value={calendarDate}
+          tileContent={tileContent}
+        />
       </div>
 
-      <div className="content-wrapper">
-        {/* Left Section: Calendar */}
-        <div className="calendar-section">
-          <h3>Calendar</h3>
-          <Calendar
-            onChange={handleDateChange} // Use the custom handler
-            value={calendarDate}
-            tileContent={tileContent}
-          />
-        </div>
-
-        {/* Right Section: Vaccination Details */}
-        <div className="vaccination-details">
-          <section>
-            <h3>Today&apos;s Vaccination</h3>
-            {todaysReminders.length > 0 ? (
-              todaysReminders.map((reminder, index) => (
-                <div key={index} className="vaccine-card">
-                  <h4>{reminder.vaccineName}</h4>
-                  <p>{reminder.fullName}</p>
-                  <p>{reminder.vaccineType}</p>
-                  <p>{reminder.preferredDate}</p>
-                </div>
-              ))
-            ) : (
-              <p>No vaccinations today.</p>
+      <div className="vaccination-details">
+        <section className="vaccination-card">
+          <h3>
+            {activeSection === "today"
+              ? "Today's Vaccination"
+              : activeSection === "upcoming"
+              ? "Upcoming Vaccines"
+              : "Vaccine History"}
+          </h3>
+          <div className="vaccination-content">
+            {activeSection === "today" && todaysReminders.length === 0 && (
+              <p>No reminders for today.</p>
             )}
-          </section>
-
-          <section>
-            <h3>Upcoming Vaccines</h3>
-            {upcomingReminders.length > 0 ? (
-              upcomingReminders.map((reminder, index) => (
-                <div key={index} className="vaccine-card">
-                  <h4>{reminder.vaccineName}</h4>
-                  <p>{reminder.fullName}</p>
-                  <p>{reminder.vaccineType}</p>
-                  <p>{reminder.preferredDate}</p>
-                </div>
-              ))
-            ) : (
+            {activeSection === "upcoming" && upcomingReminders.length === 0 && (
               <p>No upcoming vaccines.</p>
             )}
-          </section>
-
-          <section>
-            <h3>Vaccine History</h3>
-            {pastReminders.length > 0 ? (
-              pastReminders.map((reminder, index) => (
-                <div key={index} className="vaccine-card">
-                  <h4>{reminder.vaccineName}</h4>
-                  <p>{reminder.fullName}</p>
-                  <p>{reminder.vaccineType}</p>
-                  <p>{reminder.preferredDate}</p>
-                </div>
-              ))
-            ) : (
-              <p>No vaccine history.</p>
+            {activeSection === "history" && pastReminders.length === 0 && (
+              <p>No past vaccinations.</p>
             )}
-          </section>
-        </div>
+            {(activeSection === "today"
+              ? todaysReminders
+              : activeSection === "upcoming"
+              ? upcomingReminders
+              : pastReminders
+            ).map((reminder) => (
+              <div key={reminder.id} className="vaccination-item">
+                <p>
+                  {typeof reminder.vaccineName === "object"
+                    ? reminder.vaccineName?.name
+                    : reminder.vaccineName}
+                </p>
+                <p>{reminder.preferredDate}</p>
+                <p>{reminder.fullName}</p>
+                {reminder.confirmed ? (
+                  <span>Vaccinated</span>
+                ) : (
+                  <button onClick={() => confirmVaccination(reminder.id)}>
+                    Confirm Vaccination
+                  </button>
+                )}
+
+                <button
+                  onClick={() => deleteVaccinationReminder(reminder.id)}
+                  className="delete-button"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

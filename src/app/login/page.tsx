@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
-import "./login.css"; // Ensure you have a corresponding CSS file for styling
+import "./login.css";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -16,14 +16,9 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
+      await signInWithEmailAndPassword(auth, email, password);
       alert("Login successful!");
-      router.push("/dash"); // Redirect to dashboard
+      router.push("/dash");
     } catch (error: any) {
       setError(error.message);
       alert("Error: " + error.message);
@@ -63,6 +58,17 @@ const LoginPage: React.FC = () => {
             </div>
             {error && <p className="error-message">{error}</p>}
             <button type="submit">Login</button>
+
+            {/* Link to Register Page */}
+            <p className="register-link">
+              Don't have an account?
+              <a
+                href="/register"
+                className="register-link-text text-sky-500 mx-1"
+              >
+                Register here
+              </a>
+            </p>
           </form>
         </div>
       </div>

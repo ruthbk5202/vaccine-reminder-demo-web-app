@@ -6,7 +6,7 @@ import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBe_vVrogN04TSG6Lm25OiGVWpO_eqv2jU",
-  authDomain: "vaccine-app-3bad4.firebaseapp.com", // Fixed domain
+  authDomain: "vaccine-app-3bad4.firebaseapp.com",
   projectId: "vaccine-app-3bad4",
   storageBucket: "vaccine-app-3bad4.appspot.com",
   messagingSenderId: "127341967057",
@@ -14,7 +14,6 @@ const firebaseConfig = {
   measurementId: "G-7V4KX7J37R",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);

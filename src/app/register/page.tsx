@@ -2,10 +2,11 @@
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
-import { auth, db } from "../firebaseConfig";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { auth, db, storage } from "../firebaseConfig";
 import "./register.css";
 
 const Register: React.FC = () => {
@@ -13,7 +14,8 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const router = useRouter();
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
@@ -31,15 +33,23 @@ const Register: React.FC = () => {
       );
       const user = userCredential.user;
 
-      const response = setDoc(doc(db, "Users", user.uid), {
-        FirstName: "",
+      let profilePictureUrl = "";
+      if (profilePicture) {
+        const storageRef = ref(storage, `profilePictures/${user.uid}`);
+        await uploadBytes(storageRef, profilePicture);
+        profilePictureUrl = await getDownloadURL(storageRef);
+      }
+
+      await setDoc(doc(db, "Users", user.uid), {
+        FirstName: name,
         lastName: "",
         email: email,
         isAdmin: false,
         dob: "",
-        profilePicture: "",
+        profilePicture: profilePictureUrl,
         id: user.uid,
       });
+
       alert("User Created successfully");
       router.push("/profile");
     } catch (error: any) {
@@ -82,7 +92,7 @@ const Register: React.FC = () => {
               <label htmlFor="password">Password</label>
               <div className="password-input-wrapper">
                 <input
-                  type={showPassword ? "text" : "password"} // Toggle input type
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   required
@@ -92,13 +102,13 @@ const Register: React.FC = () => {
                 <button
                   type="button"
                   className="password-toggle-button"
-                  onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}{" "}
-                  {/* Toggle icon */}
                 </button>
               </div>
             </div>
+
             <label>
               <input
                 type="checkbox"
@@ -107,9 +117,15 @@ const Register: React.FC = () => {
               />
               I agree to the terms and conditions
             </label>
-            <div className="py-2"></div>
-
-            <button type="submit">Register</button>
+            <div className="register-btn">
+              <button type="submit">Register</button>
+            </div>
+            <div className="sign-in">
+              <p>Known to Vaccine Reminder? </p>
+              <span className="link-sign">
+                <a href="/login">Sign In</a>
+              </span>
+            </div>
           </form>
         </div>
       </div>

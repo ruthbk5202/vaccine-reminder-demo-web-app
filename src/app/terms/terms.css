@@ -1,4 +1,4 @@
-/* Apply sans-serif font and black color to the entire page */
+
 .full-width {
     font-family: sans-serif;
     color: black;
@@ -6,13 +6,13 @@
    margin-bottom: 32px;
   }
   
-  /* Ensure the Container takes full width */
+ 
   .full-width-container {
-    max-width: 100% !important; /* Override Material-UI's default max-width */
-    padding: 0 16px; /* Add some padding to avoid content touching the edges */
+    max-width: 100% !important; 
+    padding: 0 16px;
   }
   
-  /* Style for the title */
+
   .terms-title {
     margin-bottom: 2rem; 
     color: azure;
@@ -25,9 +25,9 @@
     border-bottom-right-radius: 50% 90%;
   }
   
-  /* Style for links */
+  
   a {
-    color: #3f51b5; /* Match Material-UI's primary color */
+    color: #3f51b5; 
     text-decoration: none;
   }
   

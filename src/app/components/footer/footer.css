@@ -3,9 +3,10 @@
   flex-direction: row;
   background-color: red;
   color: white;
-  padding: 20px;
+  padding: 32px;
   justify-content: space-between;
-  margin-top: 35px;
+
+
 }
 
 .footer-content {
@@ -13,6 +14,7 @@
   flex-direction: column;
   margin-bottom: 15px;
   justify-content: end;
+  gap:32px;
 }
 
 .footer input {

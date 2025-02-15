@@ -1,4 +1,4 @@
-/* Base Styles */
+
 .login-container {
   display: flex;
   justify-content: center;
@@ -81,39 +81,38 @@ button:hover {
   margin-bottom: 10px;
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
   .grid-container {
-    grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    grid-template-columns: 1fr; 
   }
 
   .image-section {
-    display: none; /* Hide the image section on smaller screens */
+    display: none; 
   }
 
   .form-section {
-    padding: 20px; /* Reduce padding for smaller screens */
+    padding: 20px; 
   }
 
   .form-section h1 {
-    font-size: 20px; /* Adjust heading size for smaller screens */
+    font-size: 20px; 
   }
 
   button {
-    font-size: 14px; /* Adjust button font size for smaller screens */
+    font-size: 14px; 
   }
 }
 
 @media (max-width: 480px) {
   .login-container {
-    padding: 10px; /* Reduce padding for very small screens */
+    padding: 10px; 
   }
 
   .form-section {
-    padding: 15px; /* Further reduce padding for very small screens */
+    padding: 15px;
   }
 
   .form-section h1 {
-    font-size: 18px; /* Further adjust heading size for very small screens */
+    font-size: 18px; 
   }
 }

@@ -1,10 +1,10 @@
-/* Center the form on the screen */
+
 .update-profile-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
-  background-color: #f4f4f4; /* Light background color */
+  height: 100vh;
+  background-color: #f4f4f4; 
   padding: 20px;
 }
 .grid-container {
@@ -30,7 +30,7 @@ h1 {
   color: #333;
 }
 
-/* Form group styling */
+
 .form-group {
   margin-bottom: 20px;
 }
@@ -57,7 +57,7 @@ h1 {
   outline: none;
 }
 
-/* Style the submit button */
+
 button[type="submit"] {
   width: 100%;
   padding: 12px;
@@ -77,3 +77,9 @@ button[type="submit"]:hover {
 button[type="submit"] + div {
   margin-top: 10px;
 }
+.skip-button {
+  margin-left: auto;
+  display: block;
+  text-align: right;
+}
+

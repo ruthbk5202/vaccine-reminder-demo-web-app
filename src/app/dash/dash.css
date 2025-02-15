@@ -1,236 +1,317 @@
-/* Ensure the dashboard container takes up the full viewport */
+
+body {
+  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7f6; 
+}
+
+
 .dashboard-container {
   display: flex;
+  height: 100vh;
+  background-color: #ffffff; 
+  gap:20px;
+}
+
+
+.sidebar {
+  width: 250px;
+  background-color:none; 
+  color: rgb(12, 12, 12);
+  display: flex;
   flex-direction: column;
-  height: 100vh; /* Full viewport height */
-  width: 100vw; /* Full viewport width */
-  overflow: hidden; /* Prevent scrolling */
+  padding: 20px;
 }
 
-/* Menu bar styling */
-.menu-bar {
+.sidebar-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
 }
 
-.menu-icons {
+.profile-icon {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
   display: flex;
-  gap: 15px;
-}
-
-.menu-icons .icon {
-  font-size: 20px;
+  align-items: center;
+  padding: 10px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.profile-section {
+.sidebar-menu li:hover {
+  background-color: #88b9e9; 
+}
+
+.sidebar-menu li.active {
+  background-color: #3498DB; 
+}
+
+.menu-icon {
+  margin-right: 10px;
+}
+
+.logout-button {
   display: flex;
   align-items: center;
-  gap: 10px;
+  background-color: #E74C3C; 
+  gap: 4px;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: auto;
+  transition: background-color 0.3s;
 }
 
-/* Content wrapper styling */
+.logout-button:hover {
+  background-color: #887bde;
+}
+
+.logout-icon {
+  margin-right: 10px;
+}
+
+
 .content-wrapper {
+  flex: 1;
   display: flex;
-  flex: 1; /* Take up remaining space */
-  overflow: hidden; /* Prevent scrolling */
+  padding: 20px;
 }
 
-/* Calendar section styling */
+
 .calendar-section {
   flex: 1;
-  padding: 20px;
-  border-right: 1px solid #ddd;
+  margin-right: 20px;
 }
 
-/* Vaccination details section styling */
+.calendar-section h3 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #2C3E50; 
+}
+
+
 .vaccination-details {
   flex: 2;
-  padding: 20px;
-  overflow-y: auto; /* Allow scrolling for content */
 }
 
-/* Vaccine card styling */
-.vaccine-card {
-  background-color: #c51a1a;
-  border: 1px solid #ddd;
+.vaccination-card {
+  background-color: #ECF0F1; 
+  padding: 20px;
   border-radius: 8px;
+  margin-bottom: 20px;
+  overflow-y: scroll;
+  height: 324px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  margin-right: 32px;
+}
+
+.vaccination-card h3 {
+  margin-bottom: 20px;
+  color: #2980B9; 
+}
+.vaccination-card p{
+  color: #04090d;
+}
+.vaccination-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  color: #000000;
+}
+
+.vaccine-card {
+  background-color: #FFFFFF; 
   padding: 15px;
-  margin-bottom: 15px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: calc(33.333% - 20px);
+  overflow-y: auto;
 }
 
 .vaccine-card h4 {
-  margin: 0 0 10px;
-  font-size: 18px;
+  margin-bottom: 10px;
+  color: #3498DB;
 }
 
-.vaccine-card p {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #555;
-}
 
-/* Calendar pin styling */
-.calendar-pin {
-  color: #b86bff;
-  font-size: 12px;
-}
-
-/* Loading state styling */
 .loading {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  font-size: 20px;
-  color: #555;
+  font-size: 24px;
+  color: #7F8C8D;
 }
 
-/* Logout button styling */
-.logout-button {
-  background-color: #ff6b6b;
+
+.react-calendar {
+  max-width: 100%;
+  background: #BDC3C7;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.react-calendar__navigation button {
+  background: #3498DB; 
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 5px;
+  padding: 8px 15px; 
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease; 
+}
+
+
+.react-calendar__navigation button:hover {
+  background: #2980B9; 
+  transform: scale(1.05); 
+}
+
+
+
+.react-calendar__navigation button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.7); 
+}
+
+
+.react-calendar__navigation button:hover {
+  background: #3498DB; 
+}
+
+
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  color: #34495E; 
+}
+
+
+.react-calendar__tile {
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.react-calendar__tile:hover {
+  background: #3498DB;
+  cursor: pointer;
+  color: white;
+}
+
+
+.react-calendar__tile--active {
+  background: #1ABC9C;
+  color: white;
+}
+
+
+.calendar-pin {
+  color: #E67E22; 
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+
+.react-calendar__tile--disabled {
+  color: #BDC3C7;
+  background: #ECF0F1; 
+}
+.profile-icon-container {
+  position: relative;
+  cursor: pointer;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 5px;
+  border-radius: 50%;
+  color: white;
   font-size: 14px;
 }
 
-.logout-button:hover {
-  background-color: #ff4c4c;
+.file-input {
+  display: none; 
 }
-
-/* Container for vaccination details */
-.vaccination-details {
-  display: flex; /* Arrange sections horizontally */
-  gap: 20px; /* Add space between sections */
+.profile-section {
+  margin-bottom: 20px;
   padding: 20px;
-  background-color: #f9f9f9; /* Light background for the container */
-  border-radius: 10px; /* Rounded corners */
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Style for each section */
-.vaccine-section {
-  flex: 1; /* Each section takes equal width */
-  padding: 15px;
-  border-radius: 10px; /* Rounded corners for cards */
-  background-color: #fff; /* Default background color */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for card effect */
+.profile-details {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
-/* Different background colors for each section */
-.vaccine-section.today {
-  background-color: #e3f2fd; /* Light blue for today's vaccinations */
+.profile-picture-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e0e0e0;
 }
 
-.vaccine-section.upcoming {
-  background-color: #fff3e0; /* Light orange for upcoming vaccines */
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.vaccine-section.history {
-  background-color: #f5f5f5; /* Light gray for vaccine history */
-}
-
-/* Style for individual vaccine cards */
-.vaccine-card {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  background-color: #ffffff; /* White background for cards */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
-}
-
-.vaccine-card h4 {
+.profile-info h4 {
   margin: 0;
-  font-size: 1.2em;
+  font-size: 1.5rem;
   color: #333;
 }
 
-.vaccine-card p {
-  margin: 5px 0;
-  font-size: 0.9em;
-  color: #666;
+.profile-info p {
+  margin: 0;
+  color: #777;
 }
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  /* Stack the content wrapper vertically on smaller screens */
-  .content-wrapper {
-    flex-direction: column;
-  }
-
-  /* Remove the border on the calendar section */
-  .calendar-section {
-    border-right: none;
-    border-bottom: 1px solid #ddd;
-  }
-
-  /* Adjust padding for smaller screens */
-  .calendar-section,
-  .vaccination-details {
-    padding: 15px;
-  }
-
-  /* Stack the vaccination details sections vertically */
-  .vaccination-details {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  /* Reduce font sizes for smaller screens */
-  .vaccine-card h4 {
-    font-size: 1em;
-  }
-
-  .vaccine-card p {
-    font-size: 0.8em;
-  }
-
-  /* Adjust menu bar padding and font size */
-  .menu-bar {
-    padding: 10px;
-  }
-
-  .menu-icons .icon {
-    font-size: 18px;
-  }
-
-  .logout-button {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Further reduce padding and font sizes for mobile devices */
-  .calendar-section,
-  .vaccination-details {
-    padding: 10px;
-  }
-
-  .vaccine-card h4 {
-    font-size: 0.9em;
-  }
-
-  .vaccine-card p {
-    font-size: 0.75em;
-  }
-
-  .menu-icons .icon {
-    font-size: 16px;
-  }
-
-  .logout-button {
-    padding: 5px 10px;
-    font-size: 11px;
-  }
+button{
+  margin-bottom: 4px;
 }

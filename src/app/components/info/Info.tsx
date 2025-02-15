@@ -2,7 +2,7 @@
 import { Container, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
-// Styled components for better organization
+
 const InfoSection = styled("div")(({ theme }) => ({
   padding: theme.spacing(8, 2),
   backgroundColor: "#f9f9f9",
