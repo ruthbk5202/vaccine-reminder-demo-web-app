@@ -1,5 +1,4 @@
 "use client";
-import { signOut } from "firebase/auth";
 import {
   collection,
   deleteDoc,
@@ -10,7 +9,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
@@ -26,12 +24,13 @@ import {
   FaSyringe,
   FaUserCircle,
 } from "react-icons/fa";
-import { auth, db, storage } from "../firebaseConfig";
+import { storage } from "../appwite-config"; // Adjust the import path
+import { auth, db } from "../firebaseConfig";
 import "./dash.css";
 
 interface VaccineReminders {
   id: string;
-  vaccineName: { name: string } | string;
+  vaccineName: VaccineDetails;
   vaccineType: string;
   fullName: string;
   preferredDate: string;
@@ -42,6 +41,14 @@ interface VaccineReminders {
   phone?: string;
   reminderDate?: string;
   confirmed?: boolean;
+}
+interface VaccineDetails {
+  age_group: string;
+  doses: string;
+  label: string;
+  protection_against: string;
+  type: string;
+  value: string;
 }
 
 const VaccineDashboard: React.FC = () => {
@@ -57,7 +64,9 @@ const VaccineDashboard: React.FC = () => {
   const router = useRouter();
   const today = new Date().toISOString().split("T")[0];
 
-  const normalizeDate = (date: string) => date.split("T")[0];
+  const normalizeDate = (date: string) => {
+    return new Date(date).toISOString().split("T")[0];
+  };
 
   const todaysReminders = events.filter(
     (reminder) =>
@@ -69,12 +78,14 @@ const VaccineDashboard: React.FC = () => {
   );
   const pastReminders = events.filter(
     (reminder) =>
-      normalizeDate(reminder.preferredDate) < today && !reminder.confirmed
+      normalizeDate(reminder.preferredDate) < today && reminder.confirmed
   );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(`Auth state is ${auth.currentUser}`);
+
         if (!auth.currentUser) return;
 
         const userId = auth.currentUser.uid;
@@ -83,7 +94,9 @@ const VaccineDashboard: React.FC = () => {
           collection(db, "VaccineReminders"),
           where("userId", "==", userId)
         );
+
         const querySnapshot = await getDocs(remindersQuery);
+
         const remindersData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -117,25 +130,25 @@ const VaccineDashboard: React.FC = () => {
       try {
         console.log("File selected:", file.name);
 
-        const storageRef = ref(
-          storage,
-          `profilePictures/${auth.currentUser.uid}`
+        // Upload the file to Appwrite Storage
+        const response = await storage.createFile(
+          "your-bucket-id", // Replace with your Appwrite Bucket ID
+          "unique()", // Unique file ID
+          file
         );
-        console.log("Storage reference:", storageRef.fullPath);
+        console.log("File uploaded to Appwrite Storage:", response);
 
-        await uploadBytes(storageRef, file);
-        console.log("File uploaded to Firebase Storage.");
+        // Get the file URL
+        const fileUrl = storage.getFileView("your-bucket-id", response.$id);
+        console.log("File URL from Appwrite Storage:", fileUrl);
 
-        const url = await getDownloadURL(storageRef);
-        console.log("Download URL from Firebase Storage:", url);
-
+        // Save the file URL in Firestore
         const userDocRef = doc(db, "Users", auth.currentUser.uid);
-        console.log("Firestore document reference:", userDocRef.path);
-
-        await updateDoc(userDocRef, { profilePicture: url });
+        await updateDoc(userDocRef, { profilePicture: fileUrl });
         console.log("Firestore document updated successfully!");
 
-        setProfilePictureUrl(url);
+        // Update the profile picture URL in the state
+        setProfilePictureUrl(fileUrl);
       } catch (error) {
         console.error("Error uploading profile picture:", error);
       }
@@ -162,8 +175,8 @@ const VaccineDashboard: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      router.push("/");
+      localStorage.clear();
+      router.push("/"); // Redirect to homepage if user is logged in
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -242,7 +255,6 @@ const VaccineDashboard: React.FC = () => {
               style={{ display: "none" }}
             />
           </div>
-          {/* Display the username here */}
           {username && <div className="username">{username}</div>}
         </div>
         <ul className="sidebar-menu">
@@ -270,6 +282,11 @@ const VaccineDashboard: React.FC = () => {
           <li onClick={() => router.push("/details")}>
             <BsFillCalendar2EventFill className="menu-icon" />
             <span>Add Event</span>
+          </li>
+          {/* Add Home Button */}
+          <li onClick={() => router.push("/home")}>
+            <FaHome className="menu-icon" />
+            <span>Home</span>
           </li>
         </ul>
 
@@ -312,31 +329,37 @@ const VaccineDashboard: React.FC = () => {
               : activeSection === "upcoming"
               ? upcomingReminders
               : pastReminders
-            ).map((reminder) => (
-              <div key={reminder.id} className="vaccination-item">
-                <p>
-                  {typeof reminder.vaccineName === "object"
-                    ? reminder.vaccineName?.name
-                    : reminder.vaccineName}
-                </p>
-                <p>{reminder.preferredDate}</p>
-                <p>{reminder.fullName}</p>
-                {reminder.confirmed ? (
-                  <span>Vaccinated</span>
-                ) : (
-                  <button onClick={() => confirmVaccination(reminder.id)}>
-                    Confirm Vaccination
-                  </button>
-                )}
+            ).map((reminder) => {
+              const t = JSON.stringify(reminder.vaccineName);
+              const r = JSON.stringify(t);
 
-                <button
-                  onClick={() => deleteVaccinationReminder(reminder.id)}
-                  className="delete-button"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+              return (
+                <div key={reminder.id} className="vaccination-item">
+                  <p>{reminder.vaccineName.label}</p>
+                  <p>{reminder.vaccineName.age_group}</p>
+                  <p>{reminder.vaccineName.doses}</p>
+
+                  <p>{reminder.preferredDate}</p>
+                  <p>{reminder.fullName}</p>
+                  {reminder.confirmed ? (
+                    <span>Vaccinated</span>
+                  ) : (
+                    <button
+                      onClick={() => confirmVaccination(reminder.id)}
+                      className="confirm-btn"
+                    >
+                      Confirm Vaccination
+                    </button>
+                  )}
+                  <button
+                    onClick={() => deleteVaccinationReminder(reminder.id)}
+                    className="delete-button"
+                  >
+                    Delete
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </section>
       </div>

@@ -105,7 +105,7 @@ body {
 }
 
 .vaccination-card {
-  background-color: #ECF0F1; 
+  background-color: #84daf0; 
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -314,4 +314,25 @@ body {
 }
 button{
   margin-bottom: 4px;
+}
+.delete-button{
+  background: #3498DB; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px; 
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease; 
+}
+.confirm-btn{
+  background: #3498DB; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px; 
+  margin-right: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.2s ease; 
 }

@@ -19,6 +19,7 @@
     "@mui/material": "^6.4.4",
     "@types/nodemailer": "^6.4.16",
     "@types/swiper": "^6.0.0",
+    "appwrite": "^17.0.0",
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",

@@ -21,11 +21,11 @@ interface VaccineFormData {
   vaccineName: Vaccine | null;
   vaccineType: string;
   fullName: string;
-  dateOfBirth: string;
+
   email: string;
   phone: string;
   preferredDate: string;
-  reminderDate: string; // This will now include both date and time
+  reminderDate: string;
   healthConditions?: string;
   notes?: string;
 }
@@ -35,7 +35,7 @@ const VaccineForm: React.FC = () => {
     vaccineName: null,
     vaccineType: "",
     fullName: "",
-    dateOfBirth: "",
+
     email: "",
     phone: "",
     preferredDate: "",
@@ -115,7 +115,6 @@ const VaccineForm: React.FC = () => {
     if (
       !formData.vaccineName ||
       !formData.fullName ||
-      !formData.dateOfBirth ||
       !formData.email ||
       !formData.phone ||
       !formData.preferredDate ||
@@ -125,26 +124,46 @@ const VaccineForm: React.FC = () => {
       return false;
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       alert("Please enter a valid email address.");
       return false;
     }
 
-    // Validate phone number format (basic validation)
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(formData.phone)) {
       alert("Please enter a valid 10-digit phone number.");
       return false;
     }
+    // const currentDate = new Date();
+    // const preferredDate = new Date(formData.preferredDate);
+    // const reminderDate = new Date(formData.reminderDate);
+
+    // if (preferredDate < currentDate) {
+    //   alert("Preferred date must be today or a future date.");
+    //   return false;
+    // }
+
+    // if (reminderDate < currentDate) {
+    //   alert("Reminder date must be today or a future date.");
+    //   return false;
+    // }
+
+    // if (preferredDate < reminderDate) {
+    //   alert(
+    //     "Preferred date must be greater than or equal to the reminder date."
+    //   );
+    //   return false;
+    // }
 
     return true;
+  };
+  const handleNavigate = () => {
+    router.push("/dash");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) {
       return;
     }
@@ -160,12 +179,11 @@ const VaccineForm: React.FC = () => {
     }
 
     try {
-      // Save data to Firestore
       const docRef = await addDoc(collection(db, "VaccineReminders"), {
         vaccineName: formData.vaccineName,
         vaccineType: formData.vaccineType,
         fullName: formData.fullName,
-        dateOfBirth: formData.dateOfBirth,
+
         email: formData.email,
         phone: formData.phone,
         preferredDate: formData.preferredDate,
@@ -177,18 +195,16 @@ const VaccineForm: React.FC = () => {
 
       console.log("Document written with ID: ", docRef.id);
 
-      // Prepare email data
       const emailData = {
         sender_email: "vreminder15@gmail.com",
         receiver_email: formData.email,
         subject: `Vaccine Reminder for ${formData.fullName}`,
         body: `Dear ${formData.fullName},\n\nThis is a reminder for your upcoming vaccination of ${formData.vaccineName?.label} on ${formData.reminderDate}. Please make sure to be on time.\n\nRegards, Vaccine Reminder System`,
-        smtp_username: process.env.NEXT_PUBLIC_SMTP_USERNAME, // Use environment variable
-        smtp_password: process.env.NEXT_PUBLIC_SMTP_PASSWORD, // Use environment variable
-        reminder_date: new Date(formData.reminderDate).toISOString(), // Ensure proper date format
+        smtp_username: process.env.NEXT_PUBLIC_SMTP_USERNAME,
+        smtp_password: process.env.NEXT_PUBLIC_SMTP_PASSWORD,
+        reminder_date: new Date(formData.reminderDate).toISOString(),
       };
 
-      // Send data to backend to schedule email
       const response = await fetch("http://127.0.0.1:5000/schedule-email", {
         method: "POST",
         headers: {
@@ -205,12 +221,11 @@ const VaccineForm: React.FC = () => {
         "Vaccine details submitted and reminder email scheduled successfully!"
       );
 
-      // Reset form
       setFormData({
         vaccineName: null,
         vaccineType: "",
         fullName: "",
-        dateOfBirth: "",
+
         email: "",
         phone: "",
         preferredDate: "",
@@ -219,8 +234,7 @@ const VaccineForm: React.FC = () => {
         notes: "",
       });
 
-      // Redirect to dashboard
-      // router.push("/dash");
+      router.push("/dash");
     } catch (error) {
       console.error("Error adding document or scheduling email: ", error);
       setError("Failed to submit vaccine details. Please try again.");
@@ -230,134 +244,155 @@ const VaccineForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Vaccine Reminder Form</h2>
+    <div className="form-container">
+      <form onSubmit={handleSubmit} className="vaccine-form">
+        <h2 className="form-title">Vaccine Reminder Form</h2>
 
-      {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-message">{error}</div>}
 
-      <label>
-        Vaccine Name:
-        <Select
-          options={vaccineOptions}
-          value={formData.vaccineName}
-          onChange={handleVaccineChange}
-          placeholder="Select a vaccine..."
-          isSearchable={true}
-          required
-          aria-label="Select a vaccine"
-        />
-      </label>
+        <div className="form-grid">
+          <div className="form-group">
+            <label className="form-label-vaccine">
+              Vaccine Name *
+              <Select
+                className="react-select-container"
+                classNamePrefix="react-select"
+                options={vaccineOptions}
+                value={formData.vaccineName}
+                onChange={handleVaccineChange}
+                placeholder="Select a vaccine..."
+                isSearchable={true}
+                required
+                aria-label="Select a vaccine"
+              />
+            </label>
+          </div>
 
-      <label>
-        Vaccine Type:
-        <input
-          type="text"
-          name="vaccineType"
-          value={formData.vaccineType}
-          onChange={handleChange}
-          required
-          readOnly
-          aria-label="Vaccine Type"
-        />
-      </label>
+          <div className="form-group">
+            <label className="form-label-vaccine">
+              Vaccine Type *
+              <input
+                type="text"
+                name="vaccineType"
+                value={formData.vaccineType}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
+            </label>
+          </div>
 
-      <label>
-        Full Name:
-        <input
-          type="text"
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleChange}
-          required
-          aria-label="Full Name"
-        />
-      </label>
+          <div className="form-group">
+            <label className="form-label">
+              Email *
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="example@email.com"
+              />
+            </label>
+          </div>
 
-      <label>
-        Date of Birth:
-        <input
-          type="date"
-          name="dateOfBirth"
-          value={formData.dateOfBirth}
-          onChange={handleChange}
-          required
-          aria-label="Date of Birth"
-        />
-      </label>
+          <div className="form-group">
+            <label className="form-label">
+              FullName
+              <input
+                type="name"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                className="form-input"
+                placeholder=""
+              />
+            </label>
+          </div>
+          <div className="form-group">
+            <label className="form-label">
+              Phone
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="123-456-7890"
+              />
+            </label>
+          </div>
 
-      <label>
-        Email:
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          aria-label="Email"
-        />
-      </label>
+          <div className="form-group">
+            <label className="form-label">
+              Preferred Vaccination Date *
+              <input
+                type="date"
+                name="preferredDate"
+                value={formData.preferredDate}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
+            </label>
+          </div>
 
-      <label>
-        Phone:
-        <input
-          type="tel"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-          aria-label="Phone"
-        />
-      </label>
+          <div className="form-group">
+            <label className="form-label">
+              Reminder Date and Time *
+              <input
+                type="datetime-local"
+                name="reminderDate"
+                value={formData.reminderDate}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
+            </label>
+          </div>
 
-      <label>
-        Preferred Vaccination Date:
-        <input
-          type="date"
-          name="preferredDate"
-          value={formData.preferredDate}
-          onChange={handleChange}
-          required
-          aria-label="Preferred Vaccination Date"
-        />
-      </label>
+          <div className="form-group">
+            <label className="form-label">
+              Health Conditions (Optional)
+              <input
+                type="text"
+                name="healthConditions"
+                value={formData.healthConditions}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="Any existing health conditions"
+              />
+            </label>
+          </div>
 
-      <label>
-        Reminder Date and Time:
-        <input
-          type="datetime-local"
-          name="reminderDate"
-          value={formData.reminderDate}
-          onChange={handleChange}
-          required
-          aria-label="Reminder Date and Time"
-        />
-      </label>
+          <div className="form-group full-width">
+            <label className="form-label">
+              Notes (Optional)
+              <textarea
+                name="notes"
+                value={formData.notes}
+                onChange={handleChange}
+                className="form-textarea"
+                placeholder="Additional notes or comments"
+                rows={4}
+              />
+            </label>
+          </div>
+        </div>
 
-      <label>
-        Health Conditions (Optional):
-        <input
-          type="text"
-          name="healthConditions"
-          value={formData.healthConditions}
-          onChange={handleChange}
-          aria-label="Health Conditions"
-        />
-      </label>
-
-      <label>
-        Notes (Optional):
-        <textarea
-          name="notes"
-          value={formData.notes}
-          onChange={handleChange}
-          aria-label="Notes"
-        />
-      </label>
-
-      <button type="submit" disabled={isSubmitting} aria-label="Submit Form">
-        {isSubmitting ? "Submitting..." : "Submit"}
-      </button>
-    </form>
+        <button type="submit" disabled={isSubmitting} className="submit-button">
+          {isSubmitting ? "Submitting..." : "Schedule Reminder"}
+        </button>
+        <button
+          type="submit"
+          onClick={handleNavigate}
+          className="submit-button"
+        >
+          dashboard
+        </button>
+      </form>
+    </div>
   );
 };
 

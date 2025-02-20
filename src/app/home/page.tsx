@@ -19,7 +19,6 @@ import {
   getFirestore,
   onSnapshot,
   query,
-  where,
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,6 +26,7 @@ import { PiAppStoreLogoThin, PiGooglePlayLogoThin } from "react-icons/pi";
 import ReactPlayer from "react-player";
 // import AboutUs from "../components/about/About";
 import VaccineImp from "../components/impvaccine/VaccineImp";
+
 import "./home.css";
 
 interface VaccineReminders {
@@ -42,6 +42,12 @@ interface VaccineReminders {
   healthConditions?: string;
   notes?: string;
   userId: string;
+}
+
+export interface AppUser {
+  id: string;
+  name: string;
+  email: string;
 }
 
 const fadeIn = keyframes`
@@ -188,9 +194,13 @@ const DownloadSection = styled("div")(({ theme }) => ({
 function HomePage() {
   const [userEvents, setUserEvents] = useState<VaccineReminders[]>([]);
   const [loading, setLoading] = useState(true);
-  const [FirstName, setFullName] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [isMuted, setIsMuted] = useState(true); // State to manage mute/unmute
+  const [isMuted, setIsMuted] = useState(true);
+
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [parsedUserNull, setParsedUser] = useState<AppUser | null>(null);
+
   const auth = getAuth();
   const db = getFirestore();
   const router = useRouter();
@@ -199,35 +209,31 @@ function HomePage() {
     router.push("/register");
   };
 
+  const handleDashboardClick = () => {
+    router.push("/dash"); // Navigate to the dashboard
+  };
+
   const toggleMute = () => {
     setIsMuted((prev) => !prev); // Toggle mute state
   };
 
   useEffect(() => {
     const checkUserStatus = async () => {
-      const user = auth.currentUser;
+      const userString = localStorage.getItem("user");
 
-      if (user) {
-        console.log("hellooo 11");
+      if (userString != null) {
+        if (userString) {
+          try {
+            const parsedUser = JSON.parse(userString) as AppUser;
+            setParsedUser(parsedUser);
+            console.log("Valid user:", parsedUser.email);
+          } catch (error) {
+            console.error("Error parsing user data:", error);
+          }
+        }
+
         try {
-          // const userDocRef = doc(db, "Users", user.uid);
-          // await updateDoc(userDocRef, {
-          //   profileCompleted: true,
-          // });
-          console.log("hellooo 1177777");
-          // const unsubscribeUserProfile = onSnapshot(userDocRef, (userDoc) => {
-          //   if (userDoc.exists()) {
-          //     const userData = userDoc.data();
-          //     if (userData.profileCompleted) {
-          //       setFullName(userData.FirstName);
-          //     }
-          //   }
-          // });
-          console.log("hellooo 12");
-          const eventQuery = query(
-            collection(db, "vaccineReminders"),
-            where("userId", "==", user.uid)
-          );
+          const eventQuery = query(collection(db, "vaccineReminders"));
 
           const unsubscribe = onSnapshot(eventQuery, (snapshot) => {
             if (!snapshot.empty) {
@@ -255,7 +261,6 @@ function HomePage() {
                 .filter((event): event is VaccineReminders => event !== null);
 
               console.log("Fetched events:", events);
-              console.log("hello112233");
 
               setUserEvents(events);
             } else {
@@ -264,25 +269,21 @@ function HomePage() {
           });
 
           setLoading(false);
-          console.log("hellooooooooooo22222");
+
           return () => {
             unsubscribe();
-            // unsubscribeUserProfile();
           };
         } catch (error) {
           console.error("Error fetching user or event data:", error);
         }
       } else {
-        console.log("USer is not logged in");
+        setIsRegistered(false); // User is not registered/logged in
+        setLoading(false);
       }
     };
 
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        checkUserStatus();
-      } else {
-        setLoading(false);
-      }
+      checkUserStatus();
     });
   }, [auth, db]);
 
@@ -294,10 +295,8 @@ function HomePage() {
     <Box>
       <NavBar
         profilePicture={profileImage}
-        firstName={FirstName}
-        isRegistered={true}
-        hasProfile={true}
-        hasEvents={userEvents.length > 0}
+        firstName={firstName}
+        isRegistered={isRegistered}
       />
 
       <HeroSection>
@@ -324,19 +323,37 @@ function HomePage() {
               Stay on top of your vaccination schedule with our easy-to-use
               reminder system.
             </Typography>
-            <Button
-              variant="contained"
-              color="secondary"
-              size="large"
-              sx={{
-                mt: 4,
-                animation: `${fadeIn} 1.4s ease`,
-                width: { xs: "100%", sm: "200px" },
-              }}
-              onClick={handleGetStartedClick}
-            >
-              Get Started
-            </Button>
+            {!parsedUserNull ? (
+              // Show Get Started button if user is not registered
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                sx={{
+                  mt: 4,
+                  animation: `${fadeIn} 1.4s ease`,
+                  width: { xs: "100%", sm: "200px" },
+                }}
+                onClick={handleGetStartedClick}
+              >
+                Get Started
+              </Button>
+            ) : (
+              // Show Dashboard button if user is registered
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                sx={{
+                  mt: 4,
+                  animation: `${fadeIn} 1.4s ease`,
+                  width: { xs: "100%", sm: "200px" },
+                }}
+                onClick={handleDashboardClick}
+              >
+                Go to Dashboard
+              </Button>
+            )}
           </Container>
         </Content>
       </HeroSection>
@@ -428,76 +445,34 @@ function HomePage() {
         </Container>
       </FeaturesSection>
 
-      <TestimonialsSection>
-        <Container maxWidth="lg">
-          <Typography
-            variant="h4"
-            align="center"
-            gutterBottom
-            sx={{ fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" } }}
-          >
-            What Our Users Say
-          </Typography>
-          <Stack
-            direction="row"
-            spacing={4}
-            sx={{ mt: 4 }}
-            justifyContent="center"
-          >
-            <TestimonialCard>
-              <Typography variant="body1" gutterBottom>
-                "This app has made managing my family's vaccines so much easier!
-                Highly recommend it."
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                - John Doe
-              </Typography>
-            </TestimonialCard>
-            <TestimonialCard>
-              <Typography variant="body1" gutterBottom>
-                "I never miss a vaccine appointment anymore. The reminders are a
-                lifesaver!"
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                - Jane Smith
-              </Typography>
-            </TestimonialCard>
-            <TestimonialCard>
-              <Typography variant="body1" gutterBottom>
-                "The app is so easy to use, and I love how secure it feels."
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                - Alice Johnson
-              </Typography>
-            </TestimonialCard>
-          </Stack>
-        </Container>
-      </TestimonialsSection>
+      {/* Show "Ready to Get Started" section only if user is not registered */}
+      {!parsedUserNull && (
+        <CTASection>
+          <Container maxWidth="md">
+            <Typography
+              variant="h4"
+              gutterBottom
+              sx={{ fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" } }}
+            >
+              Ready to Get Started?
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              Join thousands of users who are managing their vaccines with ease.
+            </Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="large"
+              sx={{ mt: 4, width: { xs: "100%", sm: "200px" } }}
+              onClick={handleGetStartedClick}
+            >
+              Sign Up Now
+            </Button>
+          </Container>
+        </CTASection>
+      )}
 
-      <CTASection>
-        <Container maxWidth="md">
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{ fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" } }}
-          >
-            Ready to Get Started?
-          </Typography>
-          <Typography variant="h6" gutterBottom>
-            Join thousands of users who are managing their vaccines with ease.
-          </Typography>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="large"
-            sx={{ mt: 4, width: { xs: "100%", sm: "200px" } }}
-            onClick={handleGetStartedClick}
-          >
-            Sign Up Now
-          </Button>
-        </Container>
-      </CTASection>
-
+      {/* FAQ Section */}
       <FAQSection>
         <Container maxWidth="lg">
           <Typography
@@ -526,6 +501,7 @@ function HomePage() {
         </Container>
       </FAQSection>
 
+      {/* Download Section */}
       <DownloadSection>
         <Container maxWidth="md">
           <Typography

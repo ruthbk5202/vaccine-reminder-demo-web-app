@@ -165,8 +165,8 @@ background-color:none;
   .password-toggle-button {
     right: 0px; 
   }
-  .link-sign{
+  .sign-in p{
     font-size: 0.8rem;
-    color: #3498db;
+    color: #0c3be5;
   }
 }

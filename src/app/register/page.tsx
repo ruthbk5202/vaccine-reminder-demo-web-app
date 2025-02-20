@@ -121,7 +121,7 @@ const Register: React.FC = () => {
               <button type="submit">Register</button>
             </div>
             <div className="sign-in">
-              <p>Known to Vaccine Reminder? </p>
+              <p>Already have an account? </p>
               <span className="link-sign">
                 <a href="/login">Sign In</a>
               </span>

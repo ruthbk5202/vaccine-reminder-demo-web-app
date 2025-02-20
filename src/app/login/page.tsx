@@ -2,13 +2,16 @@
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { auth } from "../firebaseConfig";
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../firebaseConfig";
+import { AppUser } from "../home/page";
+import { doc, getDoc } from "firebase/firestore";
 import "./login.css";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [userName, setUserName] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -16,14 +19,50 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("Login successful!");
-      router.push("/dash");
+      // Sign in the user
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Fetch the user's name from Firestore
+      const userDocRef = doc(db, "Users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const fetchedName = userDoc.data()?.FirstName || "User"; // Assuming the field is "FirstName"
+        setUserName(fetchedName);
+
+        // Store the user's name in localStorage
+        localStorage.setItem("username", fetchedName);
+
+        // Create the AppUser object
+        const appUser: AppUser = {
+          id: user.uid,
+          email: user.email || "",
+          name: fetchedName, // Set the name with the fetched username
+        };
+
+        // Store the AppUser object in localStorage
+        localStorage.setItem("user", JSON.stringify(appUser));
+
+        console.log("Login successful! User data stored in localStorage:", appUser);
+        router.push("/dash");
+      } else {
+        setError("User document not found in Firestore.");
+        alert("Error: User document not found in Firestore.");
+      }
     } catch (error: any) {
       setError(error.message);
       alert("Error: " + error.message);
     }
   };
+
+  // Fetch the username from localStorage on component mount
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUserName(storedUsername);
+    }
+  }, []);
 
   return (
     <div className="login-container">
