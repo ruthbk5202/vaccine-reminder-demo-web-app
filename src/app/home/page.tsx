@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PiAppStoreLogoThin, PiGooglePlayLogoThin } from "react-icons/pi";
 import ReactPlayer from "react-player";
-// import AboutUs from "../components/about/About";
+import AboutUs from "../components/about/About";
 import VaccineImp from "../components/impvaccine/VaccineImp";
 
 import "./home.css";
@@ -210,11 +210,11 @@ function HomePage() {
   };
 
   const handleDashboardClick = () => {
-    router.push("/dash"); // Navigate to the dashboard
+    router.push("/dash");
   };
 
   const toggleMute = () => {
-    setIsMuted((prev) => !prev); // Toggle mute state
+    setIsMuted((prev) => !prev);
   };
 
   useEffect(() => {
@@ -554,7 +554,7 @@ function HomePage() {
           </Stack>
         </Container>
       </DownloadSection>
-      {/* <AboutUs /> */}
+      <AboutUs />
       <Info />
       <Footer />
     </Box>
