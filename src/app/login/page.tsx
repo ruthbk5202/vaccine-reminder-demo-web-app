@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
-        const fetchedName = userDoc.data()?.FirstName || "User"; // Assuming the field is "FirstName"
+        const fetchedName = userDoc.data()?.FirstName || "User"; // Assuming the field is &quot;FirstName&quot;
         setUserName(fetchedName);
 
         // Store the user's name in localStorage
@@ -100,7 +100,7 @@ const LoginPage: React.FC = () => {
 
             {/* Link to Register Page */}
             <p className="register-link">
-              Don't have an account?
+              Don&apos;t have an account?
               <a
                 href="/register"
                 className="register-link-text text-sky-500 mx-1"

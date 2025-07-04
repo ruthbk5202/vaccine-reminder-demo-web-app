@@ -1,11 +1,10 @@
 "use client";
 import { Box, Container, Typography } from "@mui/material";
-import "./terms.css"; 
+import "./terms.css";
 
 const TermsOfService = () => {
   return (
     <Box className="full-width">
-     
       <Container maxWidth="md" sx={{ py: 6 }} className="full-width-container">
         <Typography
           variant="h3"
@@ -26,8 +25,8 @@ const TermsOfService = () => {
             1. Acceptance of Terms
           </Typography>
           <Typography variant="body1" sx={{ color: "black" }}>
-            By accessing or using the Vaccine Reminder System (the "Service"),
-            you agree to be bound by these Terms of Service ("Terms"). If you do
+            By accessing or using the Vaccine Reminder System (the &quot;Service&quot;),
+            you agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do
             not agree to these Terms, you may not use the Service.
           </Typography>
 
@@ -86,7 +85,7 @@ const TermsOfService = () => {
             5. Limitation of Liability
           </Typography>
           <Typography variant="body1" sx={{ color: "black" }}>
-            The Service is provided "as is" without any warranties, express or
+            The Service is provided &quot;as is&quot; without any warranties, express or
             implied. We are not responsible for any damages arising from your
             use of the Service, including but not limited to:
           </Typography>
@@ -106,7 +105,7 @@ const TermsOfService = () => {
           </Typography>
           <Typography variant="body1" sx={{ color: "black" }}>
             We reserve the right to modify these Terms at any time. Any changes
-            will be posted on this page with an updated "Last Updated" date.
+            will be posted on this page with an updated &quot;Last Updated&quot; date.
             Your continued use of the Service after changes are made constitutes
             your acceptance of the revised Terms.
           </Typography>

@@ -1,12 +1,11 @@
 "use client";
 import { Box, Container, Typography } from "@mui/material";
-import VaccineImp from "../components/impvaccine/VaccineImp";
+
 import "./privacy.css";
 
 const PrivacyPolicy = () => {
   return (
     <Box className="full-width">
-   
       <Container maxWidth="md" sx={{ py: 6 }} className="full-width-container">
         <Typography
           variant="h3"
@@ -141,7 +140,7 @@ const PrivacyPolicy = () => {
           </Typography>
           <Typography variant="body1" sx={{ color: "black" }}>
             We may update this Privacy Policy from time to time. Any changes
-            will be posted on this page with an updated "Last Updated" date.
+            will be posted on this page with an updated &quot;Last Updated&quot; date.
           </Typography>
         </Box>
       </Container>

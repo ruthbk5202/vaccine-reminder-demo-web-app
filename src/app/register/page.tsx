@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { auth, db, storage } from "../firebaseConfig";
@@ -61,7 +62,7 @@ const Register: React.FC = () => {
     <div className="registration-container">
       <div className="grid-container">
         <div className="image-section">
-          <img src="assets/svg/undraw.svg"></img>
+          <Image src="assets/svg/undraw.svg" alt="registration form"></Image>
         </div>
         <div className="form-section">
           <h1>Register</h1>

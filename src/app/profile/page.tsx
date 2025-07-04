@@ -3,6 +3,7 @@
 import { doc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import Image from "next/image";
 import { auth, db } from "../firebaseConfig";
 import "./profile.css";
 
@@ -54,7 +55,7 @@ const UpdateProfile: React.FC = () => {
   return (
     <div className="update-profile-container">
       <div className="grid-container">
-        <img src="assets/svg/update.svg" alt="Update Profile" />
+        <Image src="assets/svg/update.svg" alt="Update Profile" ></Image>
         <form onSubmit={handleUpdateProfile}>
           <div className="form-group">
             <label htmlFor="firstName">First Name</label>
