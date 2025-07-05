@@ -1,8 +1,8 @@
-"use client";
-import Footer from "@/app/components/footer/Footer";
-import Info from "@/app/components/info/Info";
-import NavBar from "@/app/components/navbar/NavBar";
-import { VolumeOff, VolumeUp } from "@mui/icons-material"; // Import volume icons
+{"}use client{"};
+import Footer from {"}@/app/components/footer/Footer{"};
+import Info from {"}@/app/components/info/Info{"};
+import NavBar from {"}@/app/components/navbar/NavBar{"};
+import { VolumeOff, VolumeUp } from {"}@mui/icons-material{"}; // Import volume icons
 import {
   Box,
   Button,
@@ -11,23 +11,23 @@ import {
   IconButton,
   Stack,
   Typography,
-} from "@mui/material";
-import { keyframes, styled } from "@mui/system";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+} from {"}@mui/material{"};
+import { keyframes, styled } from {"}@mui/system{"};
+import { getAuth, onAuthStateChanged } from {"}firebase/auth{"};
 import {
   collection,
   getFirestore,
   onSnapshot,
   query,
-} from "firebase/firestore";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { PiAppStoreLogoThin, PiGooglePlayLogoThin } from "react-icons/pi";
-import ReactPlayer from "react-player";
-import AboutUs from "../components/about/About";
-import VaccineImp from "../components/impvaccine/VaccineImp";
+} from {"}firebase/firestore{"};
+import { useRouter } from {"}next/navigation{"};
+import { useEffect, useState } from {"}react{"};
+import { PiAppStoreLogoThin, PiGooglePlayLogoThin } from {"}react-icons/pi{"};
+import ReactPlayer from {"}react-player{"};
+import AboutUs from {"}../components/about/About{"};
+import VaccineImp from {"}../components/impvaccine/VaccineImp{"};
 
-import "./home.css";
+import {"}./home.css{"};
 
 interface VaccineReminders {
   id?: string;
@@ -61,134 +61,134 @@ const fadeIn = keyframes`
   }
 `;
 
-const HeroSection = styled("div")(({ theme }) => ({
+const HeroSection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(15, 2),
-  background: "linear-gradient(135deg, #3f51b5, #2196f3)",
-  color: "#fff",
-  textAlign: "center",
-  overflow: "hidden",
-  position: "relative",
-  [theme.breakpoints.down("sm")]: {
+  background: {"}linear-gradient(135deg, #3f51b5, #2196f3){"},
+  color: {"}#fff{"},
+  textAlign: {"}center{"},
+  overflow: {"}hidden{"},
+  position: {"}relative{"},
+  [theme.breakpoints.down({"}sm{"})]: {
     padding: theme.spacing(8, 2),
   },
 }));
 
-const VideoSection = styled("div")(({ theme }) => ({
+const VideoSection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(8, 2),
-  backgroundColor: "#f9f9f9",
-  textAlign: "center",
-  position: "relative",
-  overflow: "hidden",
+  backgroundColor: {"}#f9f9f9{"},
+  textAlign: {"}center{"},
+  position: {"}relative{"},
+  overflow: {"}hidden{"},
 }));
 
-const VideoContainer = styled("div")({
-  position: "relative",
-  paddingTop: "56.25%", // 16:9 aspect ratio
-  borderRadius: "12px",
-  overflow: "hidden",
-  margin: "0 auto",
-  maxWidth: "800px",
-  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
+const VideoContainer = styled({"}div{"})({
+  position: {"}relative{"},
+  paddingTop: {"}56.25%{"}, // 16:9 aspect ratio
+  borderRadius: {"}12px{"},
+  overflow: {"}hidden{"},
+  margin: {"}0 auto{"},
+  maxWidth: {"}800px{"},
+  boxShadow: {"}0 8px 24px rgba(0, 0, 0, 0.1){"},
 });
 
 const MuteButton = styled(IconButton)({
-  position: "absolute",
-  bottom: "16px",
-  right: "16px",
+  position: {"}absolute{"},
+  bottom: {"}16px{"},
+  right: {"}16px{"},
   zIndex: 2,
-  backgroundColor: "rgba(0, 0, 0, 0.6)",
-  color: "#fff",
-  "&:hover": {
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
+  backgroundColor: {"}rgba(0, 0, 0, 0.6){"},
+  color: {"}#fff{"},
+  {"}&:hover{"}: {
+    backgroundColor: {"}rgba(0, 0, 0, 0.8){"},
   },
 });
 
-const Content = styled("div")(({ theme }) => ({
-  position: "relative",
+const Content = styled({"}div{"})(({ theme }) => ({
+  position: {"}relative{"},
   zIndex: 1,
 }));
 
-const DashboardSection = styled("div")(({ theme }) => ({
+const DashboardSection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(8, 2),
-  backgroundColor: "#f9f9f9",
+  backgroundColor: {"}#f9f9f9{"},
 }));
 
-const EventSection = styled("div")(({ theme }) => ({
+const EventSection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(8, 2),
-  backgroundColor: "#ffffff",
+  backgroundColor: {"}#ffffff{"},
 }));
 
 const WelcomeMessage = styled(Typography)(({ theme }) => ({
-  fontSize: "2.5rem",
-  fontWeight: "bold",
-  color: "#3f51b5",
-  textAlign: "center",
+  fontSize: {"}2.5rem{"},
+  fontWeight: {"}bold{"},
+  color: {"}#3f51b5{"},
+  textAlign: {"}center{"},
   marginBottom: theme.spacing(4),
   animation: `${fadeIn} 1s ease`,
-  [theme.breakpoints.down("sm")]: {
-    fontSize: "2rem",
+  [theme.breakpoints.down({"}sm{"})]: {
+    fontSize: {"}2rem{"},
   },
 }));
 
 const LoadingSpinner = styled(CircularProgress)(({ theme }) => ({
-  margin: "20px auto",
-  display: "block",
+  margin: {"}20px auto{"},
+  display: {"}block{"},
 }));
 
 const FeatureCard = styled(Box)(({ theme }) => ({
   padding: theme.spacing(4),
-  backgroundColor: "#fff",
-  borderRadius: "12px",
-  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-  textAlign: "center",
-  transition: "transform 0.3s ease, box-shadow 0.3s ease",
-  "&:hover": {
-    transform: "translateY(-10px)",
-    boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)",
+  backgroundColor: {"}#fff{"},
+  borderRadius: {"}12px{"},
+  boxShadow: {"}0 8px 24px rgba(0, 0, 0, 0.1){"},
+  textAlign: {"}center{"},
+  transition: {"}transform 0.3s ease, box-shadow 0.3s ease{"},
+  {"}&:hover{"}: {
+    transform: {"}translateY(-10px){"},
+    boxShadow: {"}0 12px 32px rgba(0, 0, 0, 0.2){"},
   },
-  [theme.breakpoints.down("sm")]: {
+  [theme.breakpoints.down({"}sm{"})]: {
     padding: theme.spacing(2),
   },
 }));
 
-const FeaturesSection = styled("div")(({ theme }) => ({
+const FeaturesSection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(8, 2),
-  backgroundColor: "#ffffff",
+  backgroundColor: {"}#ffffff{"},
 }));
 
-const TestimonialsSection = styled("div")(({ theme }) => ({
+const TestimonialsSection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(8, 2),
-  backgroundColor: "#f9f9f9",
+  backgroundColor: {"}#f9f9f9{"},
 }));
 
 const TestimonialCard = styled(Box)(({ theme }) => ({
   padding: theme.spacing(4),
-  backgroundColor: "#ffffff",
-  borderRadius: "12px",
-  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-  textAlign: "center",
-  [theme.breakpoints.down("sm")]: {
+  backgroundColor: {"}#ffffff{"},
+  borderRadius: {"}12px{"},
+  boxShadow: {"}0 8px 24px rgba(0, 0, 0, 0.1){"},
+  textAlign: {"}center{"},
+  [theme.breakpoints.down({"}sm{"})]: {
     padding: theme.spacing(2),
   },
 }));
 
-const CTASection = styled("div")(({ theme }) => ({
+const CTASection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(8, 2),
-  backgroundColor: "#3f51b5",
-  color: "#fff",
-  textAlign: "center",
+  backgroundColor: {"}#3f51b5{"},
+  color: {"}#fff{"},
+  textAlign: {"}center{"},
 }));
 
-const FAQSection = styled("div")(({ theme }) => ({
+const FAQSection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(8, 2),
-  backgroundColor: "#ffffff",
+  backgroundColor: {"}#ffffff{"},
 }));
 
-const DownloadSection = styled("div")(({ theme }) => ({
+const DownloadSection = styled({"}div{"})(({ theme }) => ({
   padding: theme.spacing(8, 2),
-  backgroundColor: "#3f51b5",
-  color: "#fff",
-  textAlign: "center",
+  backgroundColor: {"}#3f51b5{"},
+  color: {"}#fff{"},
+  textAlign: {"}center{"},
 }));
 
 function HomePage() {
@@ -206,11 +206,11 @@ function HomePage() {
   const router = useRouter();
 
   const handleGetStartedClick = () => {
-    router.push("/register");
+    router.push({"}/register{"});
   };
 
   const handleDashboardClick = () => {
-    router.push("/dash");
+    router.push({"}/dash{"});
   };
 
   const toggleMute = () => {
@@ -219,21 +219,21 @@ function HomePage() {
 
   useEffect(() => {
     const checkUserStatus = async () => {
-      const userString = localStorage.getItem("user");
+      const userString = localStorage.getItem({"}user{"});
 
       if (userString != null) {
         if (userString) {
           try {
             const parsedUser = JSON.parse(userString) as AppUser;
             setParsedUser(parsedUser);
-            console.log("Valid user:", parsedUser.email);
+            console.log({"}Valid user:{"}, parsedUser.email);
           } catch (error) {
-            console.error("Error parsing user data:", error);
+            console.error({"}Error parsing user data:{"}, error);
           }
         }
 
         try {
-          const eventQuery = query(collection(db, "vaccineReminders"));
+          const eventQuery = query(collection(db, {"}vaccineReminders{"}));
 
           const unsubscribe = onSnapshot(eventQuery, (snapshot) => {
             if (!snapshot.empty) {
@@ -260,7 +260,7 @@ function HomePage() {
                 })
                 .filter((event): event is VaccineReminders => event !== null);
 
-              console.log("Fetched events:", events);
+              console.log({"}Fetched events:{"}, events);
 
               setUserEvents(events);
             } else {
@@ -274,7 +274,7 @@ function HomePage() {
             unsubscribe();
           };
         } catch (error) {
-          console.error("Error fetching user or event data:", error);
+          console.error({"}Error fetching user or event data:{"}, error);
         }
       } else {
         setIsRegistered(false); // User is not registered/logged in
@@ -301,23 +301,23 @@ function HomePage() {
 
       <HeroSection>
         <Content>
-          <Container maxWidth="md">
+          <Container maxWidth={"}md{"}>
             <Typography
-              variant="h2"
+              variant={"}h2{"}
               gutterBottom
               sx={{
                 animation: `${fadeIn} 1s ease`,
-                fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+                fontSize: { xs: {"}2rem{"}, sm: {"}2.5rem{"}, md: {"}3rem{"} },
               }}
             >
               Never Miss a Vaccine Again
             </Typography>
             <Typography
-              variant="h5"
+              variant={"}h5{"}
               gutterBottom
               sx={{
                 animation: `${fadeIn} 1.2s ease`,
-                fontSize: { xs: "1.25rem", sm: "1.5rem", md: "1.75rem" },
+                fontSize: { xs: {"}1.25rem{"}, sm: {"}1.5rem{"}, md: {"}1.75rem{"} },
               }}
             >
               Stay on top of your vaccination schedule with our easy-to-use
@@ -326,13 +326,13 @@ function HomePage() {
             {!parsedUserNull ? (
               // Show Get Started button if user is not registered
               <Button
-                variant="contained"
-                color="secondary"
-                size="large"
+                variant={"}contained{"}
+                color={"}secondary{"}
+                size={"}large{"}
                 sx={{
                   mt: 4,
                   animation: `${fadeIn} 1.4s ease`,
-                  width: { xs: "100%", sm: "200px" },
+                  width: { xs: {"}100%{"}, sm: {"}200px{"} },
                 }}
                 onClick={handleGetStartedClick}
               >
@@ -341,13 +341,13 @@ function HomePage() {
             ) : (
               // Show Dashboard button if user is registered
               <Button
-                variant="contained"
-                color="secondary"
-                size="small"
+                variant={"}contained{"}
+                color={"}secondary{"}
+                size={"}small{"}
                 sx={{
                   mt: 4,
                   animation: `${fadeIn} 1.4s ease`,
-                  width: { xs: "100%", sm: "200px" },
+                  width: { xs: {"}100%{"}, sm: {"}200px{"} },
                 }}
                 onClick={handleDashboardClick}
               >
@@ -360,12 +360,12 @@ function HomePage() {
 
       {/* Video Section */}
       <VideoSection>
-        <Container maxWidth="md">
+        <Container maxWidth={"}md{"}>
           <Typography
-            variant="h4"
+            variant={"}h4{"}
             gutterBottom
             sx={{
-              fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" },
+              fontSize: { xs: {"}1.75rem{"}, sm: {"}2rem{"}, md: {"}2.5rem{"} },
               mb: 4,
             }}
           >
@@ -373,9 +373,9 @@ function HomePage() {
           </Typography>
           <VideoContainer>
             <ReactPlayer
-              url="https://youtu.be/9_nyG2TUDcQ?si=cl1OVgGeE6guOyZh"
-              width="100%"
-              height="100%"
+              url={"}https://youtu.be/9_nyG2TUDcQ?si=cl1OVgGeE6guOyZh{"}
+              width={"}100%{"}
+              height={"}100%{"}
               playing={true}
               muted={isMuted} // Controlled by isMuted state
               loop={true}
@@ -386,12 +386,12 @@ function HomePage() {
                 },
               }}
               style={{
-                position: "absolute",
+                position: {"}absolute{"},
                 top: 0,
                 left: 0,
               }}
             />
-            <MuteButton onClick={toggleMute} aria-label="mute/unmute">
+            <MuteButton onClick={toggleMute} aria-label={"}mute/unmute{"}>
               {isMuted ? <VolumeOff /> : <VolumeUp />}
             </MuteButton>
           </VideoContainer>
@@ -399,44 +399,44 @@ function HomePage() {
       </VideoSection>
       <VaccineImp />
       <FeaturesSection>
-        <Container maxWidth="lg">
+        <Container maxWidth={"}lg{"}>
           <Typography
-            variant="h4"
-            align="center"
+            variant={"}h4{"}
+            align={"}center{"}
             gutterBottom
-            sx={{ fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" } }}
+            sx={{ fontSize: { xs: {"}1.75rem{"}, sm: {"}2rem{"}, md: {"}2.5rem{"} } }}
           >
             Why Choose Us?
           </Typography>
           <Stack
-            direction="row"
+            direction={"}row{"}
             spacing={4}
             sx={{ mt: 4 }}
-            justifyContent="center"
+            justifyContent={"}center{"}
           >
             <FeatureCard>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant={"}h6{"} gutterBottom>
                 Easy to Use
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant={"}body2{"} color={"}textSecondary{"}>
                 Our platform is designed with simplicity in mind, making it easy
                 for anyone to schedule and manage their vaccine appointments.
               </Typography>
             </FeatureCard>
             <FeatureCard>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant={"}h6{"} gutterBottom>
                 Reliable Reminders
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant={"}body2{"} color={"}textSecondary{"}>
                 Never miss a vaccine appointment again. We send timely reminders
                 via email and notifications.
               </Typography>
             </FeatureCard>
             <FeatureCard>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant={"}h6{"} gutterBottom>
                 Secure & Private
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant={"}body2{"} color={"}textSecondary{"}>
                 Your data is safe with us. We use industry-standard encryption
                 to protect your personal information.
               </Typography>
@@ -445,25 +445,25 @@ function HomePage() {
         </Container>
       </FeaturesSection>
 
-      {/* Show "Ready to Get Started" section only if user is not registered */}
+    
       {!parsedUserNull && (
         <CTASection>
-          <Container maxWidth="md">
+          <Container maxWidth={"}md{"}>
             <Typography
-              variant="h4"
+              variant={"}h4{"}
               gutterBottom
-              sx={{ fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" } }}
+              sx={{ fontSize: { xs: {"}1.75rem{"}, sm: {"}2rem{"}, md: {"}2.5rem{"} } }}
             >
               Ready to Get Started?
             </Typography>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant={"}h6{"} gutterBottom>
               Join thousands of users who are managing their vaccines with ease.
             </Typography>
             <Button
-              variant="contained"
-              color="secondary"
-              size="large"
-              sx={{ mt: 4, width: { xs: "100%", sm: "200px" } }}
+              variant={"}contained{"}
+              color={"}secondary{"}
+              size={"}large{"}
+              sx={{ mt: 4, width: { xs: {"}100%{"}, sm: {"}200px{"} } }}
               onClick={handleGetStartedClick}
             >
               Sign Up Now
@@ -472,81 +472,80 @@ function HomePage() {
         </CTASection>
       )}
 
-      {/* FAQ Section */}
       <FAQSection>
-        <Container maxWidth="lg">
+        <Container maxWidth={"}lg{"}>
           <Typography
-            variant="h4"
-            align="center"
+            variant={"}h4{"}
+            align={"}center{"}
             gutterBottom
-            sx={{ fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" } }}
+            sx={{ fontSize: { xs: {"}1.75rem{"}, sm: {"}2rem{"}, md: {"}2.5rem{"} } }}
           >
             Frequently Asked Questions
           </Typography>
           <Box sx={{ mt: 4 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant={"}h6{"} gutterBottom>
               Q: How do I add a vaccine reminder?
             </Typography>
-            <Typography variant="body1" gutterBottom>
-              A: You can add a vaccine reminder by navigating to the "Events"
+            <Typography variant={"}body1{"} gutterBottom>
+              A: You can add a vaccine reminder by navigating to the {"}Events{"}
               section and filling out the form.
             </Typography>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant={"}h6{"} gutterBottom>
               Q: Is my data secure?
             </Typography>
-            <Typography variant="body1" gutterBottom>
+            <Typography variant={"}body1{"} gutterBottom>
               A: Yes, we use industry-standard encryption to protect your data.
             </Typography>
           </Box>
         </Container>
       </FAQSection>
 
-      {/* Download Section */}
+    
       <DownloadSection>
-        <Container maxWidth="md">
+        <Container maxWidth={"}md{"}>
           <Typography
-            variant="h4"
+            variant={"}h4{"}
             gutterBottom
-            sx={{ fontSize: { xs: "1.75rem", sm: "2rem", md: "2.5rem" } }}
+            sx={{ fontSize: { xs: {"}1.75rem{"}, sm: {"}2rem{"}, md: {"}2.5rem{"} } }}
           >
             Download Our App
           </Typography>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant={"}h6{"} gutterBottom>
             Available on the App Store and Google Play.
           </Typography>
           <Stack
-            direction="row"
+            direction={"}row{"}
             spacing={4}
             sx={{ mt: 4 }}
-            justifyContent="center"
-            alignItems="center"
+            justifyContent={"}center{"}
+            alignItems={"}center{"}
           >
             <a
-              href="https://www.apple.com/app-store/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: "none", color: "inherit" }}
+              href={"}https://www.apple.com/app-store/{"}
+              target={"}_blank{"}
+              rel={"}noopener noreferrer{"}
+              style={{ textDecoration: {"}none{"}, color: {"}inherit{"} }}
             >
-              <Box sx={{ textAlign: "center" }}>
+              <Box sx={{ textAlign: {"}center{"} }}>
                 <PiAppStoreLogoThin
-                  style={{ fontSize: "3rem", color: "#fff" }}
+                  style={{ fontSize: {"}3rem{"}, color: {"}#fff{"} }}
                 />
-                <Typography variant="body1" sx={{ color: "#fff", mt: 1 }}>
+                <Typography variant={"}body1{"} sx={{ color: {"}#fff{"}, mt: 1 }}>
                   App Store
                 </Typography>
               </Box>
             </a>
             <a
-              href="https://play.google.com/store"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: "none", color: "inherit" }}
+              href={"}https://play.google.com/store{"}
+              target={"}_blank{"}
+              rel={"}noopener noreferrer{"}
+              style={{ textDecoration: {"}none{"}, color: {"}inherit{"} }}
             >
-              <Box sx={{ textAlign: "center" }}>
+              <Box sx={{ textAlign: {"}center{"} }}>
                 <PiGooglePlayLogoThin
-                  style={{ fontSize: "3rem", color: "#fff" }}
+                  style={{ fontSize: {"}3rem{"}, color: {"}#fff{"} }}
                 />
-                <Typography variant="body1" sx={{ color: "#fff", mt: 1 }}>
+                <Typography variant={"}body1{"} sx={{ color: {"}#fff{"}, mt: 1 }}>
                   Google Play
                 </Typography>
               </Box>

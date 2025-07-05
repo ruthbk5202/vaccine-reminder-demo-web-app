@@ -263,7 +263,7 @@ const VaccineDashboard: React.FC = () => {
             onClick={() => setActiveSection("today")}
           >
             <FaHome className="menu-icon" />
-            <span>Today's Vaccination</span>
+            <span>Today&apos;s Vaccination</span>
           </li>
           <li
             className={activeSection === "upcoming" ? "active" : ""}
