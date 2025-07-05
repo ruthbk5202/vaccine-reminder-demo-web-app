@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import type { Value } from "react-calendar/dist/cjs/shared/types";
@@ -24,7 +25,7 @@ import {
   FaSyringe,
   FaUserCircle,
 } from "react-icons/fa";
-import { storage } from "../appwite-config"; // Adjust the import path
+import { storage } from "../appwite-config"; 
 import { auth, db } from "../firebaseConfig";
 import "./dash.css";
 
@@ -130,24 +131,23 @@ const VaccineDashboard: React.FC = () => {
       try {
         console.log("File selected:", file.name);
 
-        // Upload the file to Appwrite Storage
+        
         const response = await storage.createFile(
-          "your-bucket-id", // Replace with your Appwrite Bucket ID
-          "unique()", // Unique file ID
+          "your-bucket-id", 
+          "unique()", 
           file
         );
         console.log("File uploaded to Appwrite Storage:", response);
 
-        // Get the file URL
         const fileUrl = storage.getFileView("your-bucket-id", response.$id);
         console.log("File URL from Appwrite Storage:", fileUrl);
 
-        // Save the file URL in Firestore
+       
         const userDocRef = doc(db, "Users", auth.currentUser.uid);
         await updateDoc(userDocRef, { profilePicture: fileUrl });
         console.log("Firestore document updated successfully!");
 
-        // Update the profile picture URL in the state
+       
         setProfilePictureUrl(fileUrl);
       } catch (error) {
         console.error("Error uploading profile picture:", error);
@@ -176,7 +176,7 @@ const VaccineDashboard: React.FC = () => {
   const handleLogout = async () => {
     try {
       localStorage.clear();
-      router.push("/"); // Redirect to homepage if user is logged in
+      router.push("/"); 
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -235,11 +235,11 @@ const VaccineDashboard: React.FC = () => {
               className="profile-icon-label"
             >
               {profilePicture ? (
-                <img
+                <Image
                   src={profilePicture}
                   alt="Profile"
                   className="profile-icon"
-                />
+                ></Image>
               ) : (
                 <FaUserCircle className="profile-icon" />
               )}
@@ -283,7 +283,7 @@ const VaccineDashboard: React.FC = () => {
             <BsFillCalendar2EventFill className="menu-icon" />
             <span>Add Event</span>
           </li>
-          {/* Add Home Button */}
+        
           <li onClick={() => router.push("/home")}>
             <FaHome className="menu-icon" />
             <span>Home</span>
@@ -309,7 +309,7 @@ const VaccineDashboard: React.FC = () => {
         <section className="vaccination-card">
           <h3>
             {activeSection === "today"
-              ? "Today's Vaccination"
+              ? "Today&apos;s Vaccination"
               : activeSection === "upcoming"
               ? "Upcoming Vaccines"
               : "Vaccine History"}
